@@ -1,9 +1,9 @@
 /**
  * NETRISK - Client API Communication Service
- * Connects to FastAPI backend running on port 8000
+ * Connects to FastAPI backend running on port 8001
  */
 
-const BASE_URL = window.NETRISK_API_URL || (typeof window !== "undefined" && (window.location.port === "5501" || window.location.port === "8000") ? "" : "http://127.0.0.1:8000");
+const BASE_URL = window.NETRISK_API_URL || (typeof window !== "undefined" && (window.location.port === "5501" || window.location.port === "8001" || window.location.port === "8000") ? "" : "http://127.0.0.1:8001");
 
 export class NetRiskAPI {
   static getBaseUrl() {

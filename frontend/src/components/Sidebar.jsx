@@ -10,14 +10,17 @@ import {
   ChevronRight,
   Globe,
   Sliders,
-  Cpu
+  KeyRound,
+  UserCheck,
+  LogOut
 } from 'lucide-react';
 
 export default function Sidebar({ 
   currentTab, 
   setCurrentTab, 
   isCollapsed, 
-  setIsCollapsed 
+  setIsCollapsed,
+  currentUser 
 }) {
   const navSections = [
     {
@@ -34,6 +37,7 @@ export default function Sidebar({
         { id: "sdlc-comparison", label: "SDLC Models & Simulator", icon: Sliders, badge: "5 Models" },
         { id: "documentation", label: "Documentation & SDG 9", icon: BookOpen },
         { id: "landing", label: "Architecture Showcase", icon: Globe },
+        { id: "login", label: "Security Login Portal", icon: KeyRound },
       ]
     }
   ];
@@ -125,20 +129,48 @@ export default function Sidebar({
         ))}
       </div>
 
-      {/* Bottom Telemetry Status */}
-      <div className="p-3 border-t border-cyber-border bg-black/20">
+      {/* Bottom User Profile & Status */}
+      <div className="p-3 border-t border-cyber-border bg-black/20 space-y-2">
         {!isCollapsed ? (
-          <div className="p-2.5 rounded-xl bg-cyber-card border border-cyber-border flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
-              <span className="font-semibold text-white">
-                Core Engine Active
-              </span>
+          <>
+            <div 
+              onClick={() => setCurrentTab('login')}
+              className="p-2 rounded-xl bg-cyber-card border border-cyber-border hover:border-cyber-cyan/50 flex items-center gap-2.5 cursor-pointer transition"
+              title="Click to view Security Login Portal"
+            >
+              <div className="w-7 h-7 rounded-lg bg-cyber-cyan/20 border border-cyber-cyan/40 flex items-center justify-center text-cyber-cyan font-bold text-xs shrink-0">
+                {currentUser?.name?.charAt(0) || 'K'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-bold text-white truncate">{currentUser?.name || 'Kalpita Gharat'}</div>
+                <div className="text-[10px] font-mono text-cyber-cyan truncate">{currentUser?.role || 'Lead Security Architect'}</div>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onLogout) onLogout();
+                }}
+                className="p-1.5 hover:bg-white/10 rounded-lg text-cyber-textMuted hover:text-rose-400 transition"
+                title="Sign Out / Switch Profile"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <span className="font-mono text-[10px] text-cyber-textMuted">SQLite / ORM</span>
-          </div>
+
+            <div className="px-2 flex items-center justify-between text-[11px] text-cyber-textMuted font-mono">
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Active Session
+              </span>
+              <span>Level 4</span>
+            </div>
+          </>
         ) : (
-          <div className="flex justify-center" title="Core Engine Operational">
+          <div 
+            onClick={() => setCurrentTab('login')} 
+            className="flex justify-center cursor-pointer" 
+            title={`Logged in as ${currentUser?.name || 'Kalpita Gharat'}`}
+          >
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
           </div>
         )}

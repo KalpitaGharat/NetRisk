@@ -8,9 +8,25 @@ import HistoryPage from './pages/HistoryPage';
 import SdlcComparisonPage from './pages/SdlcComparisonPage';
 import DocumentationPage from './pages/DocumentationPage';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState('dashboard');
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('netrisk_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [currentTab, setCurrentTab] = useState(() => {
+    try {
+      const saved = localStorage.getItem('netrisk_user');
+      return saved ? 'dashboard' : 'login';
+    } catch {
+      return 'login';
+    }
+  });
   const [selectedAssessmentId, setSelectedAssessmentId] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -22,6 +38,60 @@ export default function App() {
       setToast(null);
     }, 4000);
   };
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('netrisk_user', JSON.stringify(user));
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    setCurrentTab('dashboard');
+    showToast(`Session established: ${user.name} (${user.role})`, 'success');
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('netrisk_user');
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    setCurrentUser(null);
+    setCurrentTab('login');
+    showToast('Session terminated. Please authenticate to continue.', 'info');
+  };
+
+  // If unauthenticated or tab is explicitly 'login', render dedicated Login Portal
+  if (!currentUser || currentTab === 'login') {
+    return (
+      <div className="min-h-screen bg-cyber-bg text-cyber-textPrimary font-sans">
+        <LoginPage 
+          onLoginSuccess={handleLoginSuccess}
+          currentUser={currentUser}
+          onBackToDashboard={currentUser ? () => setCurrentTab('dashboard') : null}
+        />
+        {toast && (
+          <div 
+            className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-3 text-xs font-semibold animate-in slide-in-from-bottom duration-200 ${
+              toast.type === 'success' 
+                ? 'bg-cyber-elevated border-emerald-500/50 text-emerald-300' 
+                : toast.type === 'error'
+                ? 'bg-cyber-elevated border-rose-500/50 text-rose-300'
+                : 'bg-cyber-elevated border-cyber-cyan/50 text-cyber-cyan'
+            }`}
+          >
+            <span>{toast.message}</span>
+            <button 
+              onClick={() => setToast(null)}
+              className="text-cyber-textMuted hover:text-white ml-2 text-sm"
+            >
+              &times;
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cyber-bg text-cyber-textPrimary font-sans flex overflow-x-hidden">
@@ -35,6 +105,8 @@ export default function App() {
           }}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
       </div>
 
@@ -59,6 +131,8 @@ export default function App() {
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
           onMobileMenuToggle={() => setMobileOpen(!mobileOpen)}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
 
         {/* Dynamic Page Container */}
@@ -67,6 +141,7 @@ export default function App() {
             <DashboardPage 
               setCurrentTab={setCurrentTab} 
               setSelectedAssessmentId={setSelectedAssessmentId} 
+              currentUser={currentUser}
             />
           )}
 
@@ -75,6 +150,7 @@ export default function App() {
               setCurrentTab={setCurrentTab} 
               setSelectedAssessmentId={setSelectedAssessmentId}
               showToast={showToast}
+              currentUser={currentUser}
             />
           )}
 
@@ -84,6 +160,7 @@ export default function App() {
               setCurrentTab={setCurrentTab}
               setSelectedAssessmentId={setSelectedAssessmentId}
               showToast={showToast}
+              currentUser={currentUser}
             />
           )}
 
@@ -92,6 +169,7 @@ export default function App() {
               setCurrentTab={setCurrentTab} 
               setSelectedAssessmentId={setSelectedAssessmentId}
               showToast={showToast}
+              currentUser={currentUser}
             />
           )}
 

@@ -80,11 +80,14 @@ async def generic_exception_handler(request: Request, exc: Exception):
         },
     )
 
-# Root endpoint: Content-negotiated between HTML Landing page (for browsers) and JSON metadata (for API clients)
+# Root endpoint: Serves React SPA (if built) or HTML Landing page for browsers, and JSON metadata for API clients
 @app.get("/", tags=["System"])
 def root(request: Request):
     accept = request.headers.get("accept", "")
     if "text/html" in accept:
+        index_file = DIST_DIR / "index.html"
+        if index_file.exists():
+            return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
         return page_landing(request)
     return {
         "system": settings.PROJECT_NAME,
