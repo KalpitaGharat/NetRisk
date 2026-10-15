@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Assessment — NETRISK Framework</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .assessment-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      align-items: start;
+    }
+    .sticky-summary {
+      position: sticky;
+      top: 5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+    .summary-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.9rem;
+    }
+    .summary-metric:last-of-type {
+      border-bottom: none;
+    }
+    .summary-metric-val {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .summary-overall {
+      margin-top: 1rem;
+      padding: 1.25rem;
+      background: var(--bg-dark);
+      border-radius: var(--radius-md);
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+    }
+    .summary-overall-score {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1.1;
+      margin: 0.35rem 0;
+    }
+    @media (max-width: 992px) {
+      .assessment-layout {
+        grid-template-columns: 1fr;
+      }
+      .sticky-summary {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">NR</div>
+      <div class="brand-text">
+        <span class="brand-title">NETRISK</span>
+        <span class="brand-subtitle">Risk-Aware SDLC Decision Support</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="assessment.html" class="nav-link active">New Assessment</a></li>
+      <li><a href="history.html" class="nav-link">History</a></li>
+      <li><a href="project-management.html" class="nav-link">Project Management</a></li>
+      <li><a href="http://127.0.0.1:8000/docs" target="_blank" class="nav-link">API Docs ↗</a></li>
+      <li>
+        <span class="sdg-tag">
+          <span>🎯</span> SDG 9
+        </span>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">AI IDS Project Risk Assessment</h1>
+        <p class="page-desc">Quantify engineering parameters across seven risk dimensions to generate SDLC model suitability.</p>
+      </div>
+      <div>
+        <span class="badge badge-model">Step 1: Input Parameters</span>
+      </div>
+    </header>
+
+    <!-- Validation and Notification Banner -->
+    <div id="validation-alert" class="alert alert-danger" style="display: none;"></div>
+
+    <form id="assessment-form">
+      <div class="assessment-layout">
+
+        <!-- Left Column: Form Fields & Sliders -->
+        <div class="form-column">
+
+          <!-- Section: Project Metadata -->
+          <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-title">Project Metadata</div>
+            
+            <div class="form-group">
+              <label class="form-label" for="project_name">
+                Project Name <span style="color: #ef4444;">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="project_name" 
+                name="project_name" 
+                class="form-input" 
+                placeholder="e.g. DeepSentry AI - Zero Day Network IDS"
+                required
+              >
+              <div class="form-helper">Enter a unique identifier or title for the AI Intrusion Detection project.</div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="description">
+                Project Scope & Architecture Description
+              </label>
+              <textarea 
+                id="description" 
+                name="description" 
+                class="form-textarea" 
+                rows="3" 
+                placeholder="Briefly describe the ML anomaly detection model, traffic throughput targets, and deployment topology..."
+              ></textarea>
+              <div class="form-helper">Optional technical context and architectural assumptions.</div>
+            </div>
+          </div>
+
+          <!-- Section: The 7 Risk Factors -->
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">
+            Risk Evaluation Parameters
+          </h2>
+
+          <!-- 1. Security Criticality -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                1. Security Criticality
+                <span class="slider-weight">Weight: 25%</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-sec" class="badge badge-moderate">MODERATE</span>
+                <span id="num-sec" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Criticality of network confidentiality, integrity, and preventing breaches or payload evasion.
+            </p>
+            <input type="range" id="sec_criticality" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Low Impact)</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100 (Catastrophic Breach)</span>
+            </div>
+          </div>
+
+          <!-- 2. AI/ML Complexity -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                2. AI/ML Complexity
+                <span class="slider-weight">Weight: 20%</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-ai" class="badge badge-moderate">MODERATE</span>
+                <span id="num-ai" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Complexity of deep learning architectures, dataset drift, continuous retraining, and false-alarm suppression.
+            </p>
+            <input type="range" id="ai_complexity" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Heuristic / Rule-Based)</span>
+              <span>50 (Standard ML)</span>
+              <span>100 (Deep Neural Ensembles)</span>
+            </div>
+          </div>
+
+          <!-- 3. Requirement Uncertainty -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                3. Requirement Uncertainty
+                <span class="slider-weight">Weight: 15%</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-req" class="badge badge-moderate">MODERATE</span>
+                <span id="num-req" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Ambiguity, volatility, or lack of early clarity in operational intrusion detection functional specs.
+            </p>
+            <input type="range" id="req_uncertainty" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Fixed & Crystal Clear)</span>
+              <span>50 (Iterative Refinement)</span>
+              <span>100 (Highly Volatile / Unknown)</span>
+            </div>
+          </div>
+
+          <!-- 4. Threat Volatility -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                4. Threat Volatility
+                <span class="slider-weight">Weight: 15%</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-threat" class="badge badge-moderate">MODERATE</span>
+                <span id="num-threat" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Frequency, mutation speed, and sophistication of novel zero-day attack vectors in the target domain.
+            </p>
+            <input type="range" id="threat_volatility" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Static Known Signatures)</span>
+              <span>50 (Moderate Frequency)</span>
+              <span>100 (Rapid Polymorphic Zero-Days)</span>
+            </div>
+          </div>
+
+          <!-- 5. Operational Criticality -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                5. Operational Criticality
+                <span class="slider-weight">Weight: 10%</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-ops" class="badge badge-moderate">MODERATE</span>
+                <span id="num-ops" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Tolerance for network latency, packet throttling, system crashes, or downtime during inspection.
+            </p>
+            <input type="range" id="ops_criticality" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Non-Critical Lab Setup)</span>
+              <span>50 (Enterprise Backbone)</span>
+              <span>100 (Critical Infrastructure 99.999%)</span>
+            </div>
+          </div>
+
+          <!-- 6. Compliance Requirement -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                6. Compliance Requirement
+                <span class="slider-weight">Weight: 10%</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-comp" class="badge badge-moderate">MODERATE</span>
+                <span id="num-comp" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Mandatory audit traceability, regulatory standards (ISO 27001, NIST SP 800-53, GDPR, PCI-DSS).
+            </p>
+            <input type="range" id="compliance_req" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Informal Internal Tool)</span>
+              <span>50 (Standard Industry Audit)</span>
+              <span>100 (Strict Defense / Healthcare)</span>
+            </div>
+          </div>
+
+          <!-- 7. Team Experience -->
+          <div class="slider-container">
+            <div class="slider-header">
+              <span class="slider-title">
+                7. Team Experience
+                <span class="slider-weight">Risk Weight: 5% (100 - Exp)</span>
+              </span>
+              <div class="slider-value-display">
+                <span id="badge-exp" class="badge badge-moderate">INTERMEDIATE</span>
+                <span id="num-exp" class="slider-num">50</span>
+              </div>
+            </div>
+            <p class="form-helper">
+              Team maturity in AI algorithms, MLOps pipelines, secure coding, and cyber-attack surface modeling.
+            </p>
+            <input type="range" id="team_exp" class="range-slider" min="0" max="100" value="50" step="1">
+            <div class="slider-scale">
+              <span>0 (Beginner)</span>
+              <span>30 (Basic)</span>
+              <span>50 (Intermediate)</span>
+              <span>70 (Advanced)</span>
+              <span>100 (Expert)</span>
+            </div>
+          </div>
+
+          <!-- Form Action Controls -->
+          <div style="display: flex; gap: 1rem; margin-top: 2rem; margin-bottom: 3rem;">
+            <button type="submit" id="btn-submit" class="btn btn-accent btn-lg" style="flex: 2;">
+              ⚡ Calculate Risk & Recommend SDLC
+            </button>
+            <button type="button" id="btn-reset" class="btn btn-secondary btn-lg" style="flex: 1;">
+              ↺ Reset Defaults
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Sticky Live Estimation Preview -->
+        <aside class="sticky-summary">
+          <div class="card-title">
+            <span>Live Risk Meter</span>
+            <span style="font-size: 0.75rem; color: var(--accent-cyan);">Preview</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Real-time projection based on current slider positions.
+          </p>
+
+          <div class="summary-overall">
+            <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">
+              Estimated Overall Risk
+            </div>
+            <div id="preview-overall-score" class="summary-overall-score" style="color: var(--risk-moderate);">
+              50.00%
+            </div>
+            <div id="preview-overall-level">
+              <span class="badge badge-moderate">MODERATE</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.25rem;">
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">Security Contribution:</span>
+              <span id="prev-sec-c" class="summary-metric-val">12.50%</span>
+            </div>
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">AI Complexity:</span>
+              <span id="prev-ai-c" class="summary-metric-val">10.00%</span>
+            </div>
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">Req Uncertainty:</span>
+              <span id="prev-req-c" class="summary-metric-val">7.50%</span>
+            </div>
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">Threat Volatility:</span>
+              <span id="prev-threat-c" class="summary-metric-val">7.50%</span>
+            </div>
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">Operational Criticality:</span>
+              <span id="prev-ops-c" class="summary-metric-val">5.00%</span>
+            </div>
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">Compliance Mandates:</span>
+              <span id="prev-comp-c" class="summary-metric-val">5.00%</span>
+            </div>
+            <div class="summary-metric">
+              <span style="color: var(--text-muted);">Team Factor Risk:</span>
+              <span id="prev-team-c" class="summary-metric-val">2.50%</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; font-size: 0.78rem; color: var(--text-dim); line-height: 1.4;">
+            ℹ️ Press <strong>Calculate Risk</strong> to persist this assessment in SQLite and view comprehensive model rankings, charts, and tailored practices.
+          </div>
+        </aside>
+
+      </div>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <strong>NETRISK</strong> — Risk-Aware SDLC Decision-Support System
+      </div>
+      <div>
+        SE & PM CIAP Micro-Project • SDG 9 Aligned
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/assessment.js"></script>
+</body>
+</html>

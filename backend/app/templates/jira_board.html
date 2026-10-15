@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Kanban Board &bull; Jira Cloud (NRASS){% endblock %}
+{% block page_title %}Jira Cloud Agile Kanban Board{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+  <!-- Kanban Control Bar -->
+  <div class="card" style="padding: 1rem 1.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 280px;">
+      <!-- Search Input -->
+      <div style="flex: 1; min-width: 200px;">
+        <input type="text" id="kanban-search" class="form-control" placeholder="Search stories by title or key (e.g. NRASS-14)..." />
+      </div>
+
+      <!-- Epic Filter -->
+      <div style="min-width: 180px;">
+        <select id="kanban-epic-filter" class="form-control">
+          <option value="ALL">All Epics</option>
+          <option value="Foundation & Risk Assessment">Foundation &amp; Risk Assessment</option>
+          <option value="SDLC Intelligence & Recommendation">SDLC Intelligence &amp; Recommendation</option>
+          <option value="Dashboard & Persistence">Dashboard &amp; Persistence</option>
+          <option value="Validation & Testing">Validation &amp; Testing</option>
+          <option value="Professionalization & Finalization">Professionalization &amp; Finalization</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <span class="badge {% if is_live %}badge-low{% else %}badge-moderate{% endif %}">
+        {% if is_live %}LIVE JIRA SYNC{% else %}DEMO MODE{% endif %}
+      </span>
+      <button type="button" class="btn btn-cyan btn-sm" onclick="openModal('create-issue-modal')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        <span>Create User Story</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Kanban 4 Columns Grid -->
+  <div class="kanban-grid">
+    
+    <!-- Column 1: To Do -->
+    <div class="kanban-column" style="border-top: 3px solid #64748b;">
+      <div class="kanban-column-header">
+        <div class="kanban-column-title" style="color: #94a3b8;">
+          <span>To Do</span>
+        </div>
+        <span class="kanban-counter">{{ todo_issues|length }}</span>
+      </div>
+      {% for issue in todo_issues %}
+      <div class="kanban-card" data-key="{{ issue.key }}" data-title="{{ issue.title }}" data-epic="{{ issue.epic_name }}">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <a href="https://sakec-team-bcq481n1.atlassian.net/browse/{{ issue.key }}" target="_blank" class="kanban-card-key">{{ issue.key }} ↗</a>
+          <span class="badge badge-model" style="font-size: 0.6rem;">{{ issue.epic_name }}</span>
+        </div>
+        <div class="kanban-card-title">{{ issue.title }}</div>
+        <div class="kanban-card-footer">
+          <span>Story Points: {{ issue.points or 5 }}</span>
+          <span class="badge badge-moderate" style="font-size: 0.6rem;">TO DO</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Column 2: In Progress -->
+    <div class="kanban-column" style="border-top: 3px solid var(--sky);">
+      <div class="kanban-column-header">
+        <div class="kanban-column-title" style="color: var(--sky);">
+          <span>In Progress</span>
+        </div>
+        <span class="kanban-counter">{{ in_progress_issues|length }}</span>
+      </div>
+      {% for issue in in_progress_issues %}
+      <div class="kanban-card" data-key="{{ issue.key }}" data-title="{{ issue.title }}" data-epic="{{ issue.epic_name }}">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <a href="https://sakec-team-bcq481n1.atlassian.net/browse/{{ issue.key }}" target="_blank" class="kanban-card-key">{{ issue.key }} ↗</a>
+          <span class="badge badge-model" style="font-size: 0.6rem;">{{ issue.epic_name }}</span>
+        </div>
+        <div class="kanban-card-title">{{ issue.title }}</div>
+        <div class="kanban-card-footer">
+          <span>Story Points: {{ issue.points or 5 }}</span>
+          <span class="badge badge-high" style="font-size: 0.6rem;">IN PROGRESS</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Column 3: In Review -->
+    <div class="kanban-column" style="border-top: 3px solid var(--risk-moderate);">
+      <div class="kanban-column-header">
+        <div class="kanban-column-title" style="color: var(--risk-moderate);">
+          <span>In Review</span>
+        </div>
+        <span class="kanban-counter">{{ in_review_issues|length }}</span>
+      </div>
+      {% for issue in in_review_issues %}
+      <div class="kanban-card" data-key="{{ issue.key }}" data-title="{{ issue.title }}" data-epic="{{ issue.epic_name }}">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <a href="https://sakec-team-bcq481n1.atlassian.net/browse/{{ issue.key }}" target="_blank" class="kanban-card-key">{{ issue.key }} ↗</a>
+          <span class="badge badge-model" style="font-size: 0.6rem;">{{ issue.epic_name }}</span>
+        </div>
+        <div class="kanban-card-title">{{ issue.title }}</div>
+        <div class="kanban-card-footer">
+          <span>Story Points: {{ issue.points or 5 }}</span>
+          <span class="badge badge-moderate" style="font-size: 0.6rem;">IN REVIEW</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Column 4: Done -->
+    <div class="kanban-column" style="border-top: 3px solid var(--risk-low);">
+      <div class="kanban-column-header">
+        <div class="kanban-column-title" style="color: var(--risk-low);">
+          <span>Done</span>
+        </div>
+        <span class="kanban-counter">{{ done_issues|length }}</span>
+      </div>
+      {% for issue in done_issues %}
+      <div class="kanban-card" data-key="{{ issue.key }}" data-title="{{ issue.title }}" data-epic="{{ issue.epic_name }}">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <a href="https://sakec-team-bcq481n1.atlassian.net/browse/{{ issue.key }}" target="_blank" class="kanban-card-key">{{ issue.key }} ↗</a>
+          <span class="badge badge-model" style="font-size: 0.6rem;">{{ issue.epic_name }}</span>
+        </div>
+        <div class="kanban-card-title">{{ issue.title }}</div>
+        <div class="kanban-card-footer">
+          <span>Story Points: {{ issue.points or 5 }}</span>
+          <span class="badge badge-low" style="font-size: 0.6rem;">DONE</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Create Jira Issue Modal -->
+<div id="create-issue-modal" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 class="modal-title">Create Jira User Story / Task (NRASS)</h3>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('create-issue-modal')">✕</button>
+    </div>
+    <form id="create-jira-issue-form">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="issue_summary">Story Summary / Title <span style="color: var(--risk-very-high);">*</span></label>
+          <input type="text" id="issue_summary" class="form-control" required placeholder="e.g. Implement adversarial evasion robustness testing" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="issue_description">Description</label>
+          <textarea id="issue_description" class="form-control" rows="3" placeholder="Acceptance criteria and scope"></textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="issue_type">Issue Type</label>
+            <select id="issue_type" class="form-control">
+              <option value="Story" selected>Story</option>
+              <option value="Task">Task</option>
+              <option value="Bug">Bug</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="issue_priority">Priority</label>
+            <select id="issue_priority" class="form-control">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="issue_parent_epic">Parent Epic</label>
+          <select id="issue_parent_epic" class="form-control">
+            <option value="NRASS-1">NRASS-1: Foundation &amp; Risk Assessment</option>
+            <option value="NRASS-2">NRASS-2: SDLC Intelligence &amp; Recommendation</option>
+            <option value="NRASS-3">NRASS-3: Dashboard &amp; Persistence</option>
+            <option value="NRASS-4">NRASS-4: Validation &amp; Testing</option>
+            <option value="NRASS-5" selected>NRASS-5: Professionalization &amp; Finalization</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('create-issue-modal')">Cancel</button>
+        <button type="submit" id="create-issue-submit-btn" class="btn btn-cyan btn-sm">Create in Jira Cloud</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    window.initKanbanBoard();
+  });
+</script>
+{% endblock %}

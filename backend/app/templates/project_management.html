@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Project Management &bull; Jira Cloud (NRASS){% endblock %}
+{% block page_title %}Atlassian Jira Project Management{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.75rem;">
+
+  <!-- Header Banner -->
+  <div class="card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff;">{{ project_summary.project_name or 'NETRISK — Risk-Aware SDLC Selector' }}</h2>
+        <span class="badge badge-model">{{ project_summary.project_key or 'NRASS' }}</span>
+        <span class="badge {% if project_summary.is_live %}badge-low{% else %}badge-moderate{% endif %}">
+          {% if project_summary.is_live %}LIVE JIRA SYNC{% else %}DEMO MODE{% endif %}
+        </span>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+        Data Source: <strong style="color: var(--cyan);">{{ project_summary.data_source }}</strong> &bull; Atlassian Cloud Host: <a href="{{ project_summary.atlassian_url }}" target="_blank" style="color: var(--sky);">{{ project_summary.atlassian_url }} ↗</a>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="/jira-board" class="btn btn-primary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5v11"/><path d="M12 5v6"/><path d="M18 5v14"/></svg>
+        <span>Open Kanban Board</span>
+      </a>
+      <a href="{{ project_summary.atlassian_url }}" target="_blank" class="btn btn-secondary btn-sm">
+        <span>Open in Atlassian Cloud ↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Total Epics</div>
+        <div class="stat-value">{{ project_summary.total_epics }}</div>
+        <div class="stat-subtext">NRASS-1 to NRASS-5</div>
+      </div>
+      <div class="stat-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Total User Stories</div>
+        <div class="stat-value" style="color: var(--cyan);">{{ project_summary.total_stories }}</div>
+        <div class="stat-subtext">Across 5 Sprints</div>
+      </div>
+      <div class="stat-icon" style="color: var(--sky);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+    </div>
+
+    <div class="stat-card green">
+      <div>
+        <div class="stat-label">Completed Stories</div>
+        <div class="stat-value" style="color: var(--risk-low);">{{ project_summary.completed_stories }}</div>
+        <div class="stat-subtext">{{ project_summary.pending_stories }} Stories Remaining</div>
+      </div>
+      <div class="stat-icon" style="color: var(--risk-low);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Completion Velocity</div>
+        <div class="stat-value" style="color: #fff;">{{ "%.1f"|format(project_summary.completion_percentage) }}%</div>
+        <div class="stat-subtext">Project Development Velocity</div>
+      </div>
+      <div class="stat-icon" style="color: var(--purple);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Five Project Epics Accordion -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Project Epics &amp; User Stories (NRASS)</h2>
+        <div class="card-subtitle">Five structured CIAP software engineering milestones</div>
+      </div>
+      <span class="badge badge-model">{{ epics_data.epics|length }} Epics</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      {% for epic in epics_data.epics %}
+      <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <span class="badge badge-model" style="font-size: 0.75rem;">{{ epic.id }}</span>
+            <h3 style="font-size: 1rem; font-weight: 700; color: #fff;">{{ epic.name }}</h3>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-family: var(--font-mono); font-size: 0.88rem; font-weight: 700; color: var(--cyan);">
+              {{ "%.1f"|format(epic.progress_percentage) }}%
+            </span>
+            <span class="badge {% if epic.status == 'DONE' or epic.status == 'CLOSED' %}badge-low{% else %}badge-moderate{% endif %}">
+              {{ epic.status }}
+            </span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">{{ epic.summary }}</p>
+
+        <!-- Progress bar -->
+        <div style="width: 100%; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-bottom: 1rem;">
+          <div style="height: 100%; width: {{ epic.progress_percentage }}%; background: {% if epic.progress_percentage >= 100 %}var(--risk-low){% else %}var(--cyan){% endif %};"></div>
+        </div>
+
+        <!-- Stories nested list -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.5rem;">
+          {% for story in epic.stories %}
+          <div style="padding: 0.5rem 0.75rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; overflow: hidden;">
+              <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--sky); font-weight: 700; flex-shrink: 0;">{{ story.key }}</span>
+              <span style="font-size: 0.78rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ story.title }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0;">
+              {% if story.points %}
+              <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">{{ story.points }} pts</span>
+              {% endif %}
+              <span class="badge {% if story.status in ['DONE', 'CLOSED'] %}badge-low{% else %}badge-moderate{% endif %}" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">
+                {{ story.status }}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Sprints Timeline -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Development Sprints Progression</h2>
+        <div class="card-subtitle">Story point velocity across 5 structured cycles</div>
+      </div>
+      <span class="badge badge-model">{{ sprints_data.total_story_points }} Total Points</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+      {% for sp in sprints_data.sprints %}
+      <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+          <strong style="color: #fff; font-size: 0.88rem;">{{ sp.sprint_name }}</strong>
+          <span class="badge {% if sp.status == 'COMPLETED' %}badge-low{% elif sp.status == 'IN_PROGRESS' %}badge-high{% else %}badge-model{% endif %}" style="font-size: 0.62rem;">
+            {{ sp.status }}
+          </span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem;">{{ sp.start_date }} &rarr; {{ sp.end_date }}</div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.35rem;">
+          <span>Story Points:</span>
+          <span style="font-family: var(--font-mono); font-weight: 700; color: var(--cyan);">{{ sp.completed_story_points }} / {{ sp.total_story_points }}</span>
+        </div>
+        <div style="width: 100%; height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem;">
+          <div style="height: 100%; width: {{ sp.completion_percentage }}%; background: {% if sp.completion_percentage >= 100 %}var(--risk-low){% else %}var(--cyan){% endif %};"></div>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.35;">{{ sp.goal }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

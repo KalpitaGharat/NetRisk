@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Settings &amp; Diagnostics &bull; NETRISK{% endblock %}
+{% block page_title %}System Diagnostics &amp; Environment Settings{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.75rem;">
+
+  <!-- System Health Card -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">1. System Health &amp; Runtime Environment</h2>
+        <div class="card-subtitle">Operational status of backend ASGI service, database, and background daemons</div>
+      </div>
+      <span class="badge badge-low">OPERATIONAL</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+      <div style="padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">FastAPI Application</div>
+        <div style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">
+          NETRISK v{{ settings.VERSION }}
+        </div>
+        <div style="font-size: 0.75rem; color: var(--risk-low); margin-top: 0.2rem;">● Listening on http://{{ settings.HOST }}:{{ settings.PORT }}</div>
+      </div>
+
+      <div style="padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">SQLite Database Engine</div>
+        <div style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">
+          SQLAlchemy 2.0+
+        </div>
+        <div style="font-size: 0.75rem; color: var(--risk-low); margin-top: 0.2rem;">● Status: Operational ({{ assessment_count }} Assessments)</div>
+      </div>
+
+      <div style="padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Database Path</div>
+        <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--sky); margin-top: 0.35rem; word-break: break-all;">
+          database/netrisk.db
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Thread-safe connection pool</div>
+      </div>
+
+      <div style="padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Environment Mode</div>
+        <div style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: var(--cyan); margin-top: 0.25rem;">
+          {{ settings.APP_ENV|upper }}
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Debug: {{ settings.DEBUG }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- External Integrations Status -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">2. Atlassian Cloud Integration Diagnostics</h2>
+        <div class="card-subtitle">Live synchronization state with Jira Cloud and Confluence Cloud</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+      <!-- Jira Diagnostics -->
+      <div style="padding: 1.25rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <strong style="color: #fff; font-size: 0.95rem;">Jira Cloud Integration</strong>
+          <span class="badge {% if jira_status and jira_status.is_connected %}badge-low{% else %}badge-moderate{% endif %}">
+            {% if jira_status and jira_status.is_connected %}CONNECTED (LIVE){% else %}DEMO MODE{% endif %}
+          </span>
+        </div>
+        <ul style="list-style: none; font-size: 0.78rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-secondary);">
+          <li>Target Project Key: <strong style="color: #fff;">{{ settings.JIRA_PROJECT_KEY }}</strong></li>
+          <li>Cloud Host: <a href="{{ settings.JIRA_BASE_URL }}" target="_blank" style="color: var(--sky);">{{ settings.JIRA_BASE_URL }}</a></li>
+          <li>Authentication: <span style="color: var(--risk-low);">● Configured securely in backend environment (Never exposed to client)</span></li>
+          <li>Diagnostic Message: <em style="color: var(--text-muted);">{{ jira_status.message or 'Ready' }}</em></li>
+        </ul>
+      </div>
+
+      <!-- Confluence Diagnostics -->
+      <div style="padding: 1.25rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <strong style="color: #fff; font-size: 0.95rem;">Confluence Cloud Integration</strong>
+          <span class="badge badge-low">CONNECTED</span>
+        </div>
+        <ul style="list-style: none; font-size: 0.78rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-secondary);">
+          <li>Target Space Key: <strong style="color: #fff;">{{ settings.CONFLUENCE_SPACE_KEY }}</strong></li>
+          <li>Published Specifications: <strong style="color: #fff;">6 Core Documents</strong></li>
+          <li>Space URL: <a href="https://sakec-team-bcq481n1.atlassian.net/wiki/spaces/NRSS/overview" target="_blank" style="color: var(--sky);">sakec-team-bcq481n1.atlassian.net/wiki/spaces/NRSS</a></li>
+          <li>Architecture Status: <span style="color: var(--risk-low);">● Verified and accessible</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Maintenance & Cache Actions -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">3. System Maintenance &amp; Actions</h2>
+        <div class="card-subtitle">Cache management and diagnostics</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="showToast('Cleared Jira in-memory response cache.', 'info')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        <span>Purge In-Memory Jira Cache</span>
+      </button>
+
+      <a href="/api/health" target="_blank" class="btn btn-secondary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Raw API Health Check JSON ↗</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

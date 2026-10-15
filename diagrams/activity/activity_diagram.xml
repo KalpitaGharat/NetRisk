@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" modified="2026-10-04T07:00:00.000Z" agent="NETRISK" version="22.1.0" type="device">
+  <diagram id="netrisk-activity" name="Activity Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#0c1220" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Swimlane: User -->
+        <mxCell id="lane-user" value="User / Security Engineer" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#131c31;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="300" height="740" as="geometry" />
+        </mxCell>
+        <mxCell id="act-start" value="" style="ellipse;fillColor=#10b981;strokeColor=#10b981;" vertex="1" parent="lane-user">
+          <mxGeometry x="135" y="50" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="act-input" value="Input Project Name &amp;&#xa;Describe Architectural Scope" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="lane-user">
+          <mxGeometry x="40" y="110" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="act-sliders" value="Tune 7 Risk Sliders (0-100)&#xa;Observing Real-Time Risk Preview" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="lane-user">
+          <mxGeometry x="40" y="190" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="act-submit" value="Click 'Calculate Risk &amp;&#xa;Recommend SDLC'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=#38bdf8;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="lane-user">
+          <mxGeometry x="40" y="270" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="act-view-res" value="Inspect Interactive Results:&#xa;• Horizontal SDLC Comparison&#xa;• Risk Dimension Profile&#xa;• Dynamic Explanation&#xa;• Tailored Engineering Practices" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#06b6d4;fontColor=#f8fafc;" vertex="1" parent="lane-user">
+          <mxGeometry x="40" y="590" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="act-end" value="" style="ellipse;shape=doubleEllipse;fillColor=#ef4444;strokeColor=#ffffff;" vertex="1" parent="lane-user">
+          <mxGeometry x="135" y="700" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Swimlane: Backend Engine -->
+        <mxCell id="lane-backend" value="NETRISK Backend (FastAPI Services)" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#131c31;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="40" width="360" height="740" as="geometry" />
+        </mxCell>
+        <mxCell id="act-validate" value="Pydantic Range &amp; Type Validation&#xa;(Reject Empty Names, &lt;0 or &gt;100)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;" vertex="1" parent="lane-backend">
+          <mxGeometry x="70" y="250" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="act-calc-risk" value="RiskEngine: Compute Weighted Risk&#xa;&amp; Classify Severity Category" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="lane-backend">
+          <mxGeometry x="60" y="370" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="act-calc-sdlc" value="SDLCEngine: Compute 5 Suitability Scores&#xa;(Waterfall, V-Model, Agile, Spiral, DevSecOps)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#10b981;fontColor=#f8fafc;" vertex="1" parent="lane-backend">
+          <mxGeometry x="60" y="445" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="act-rec-engine" value="RecommendationEngine: Sort Models,&#xa;Synthesize Dynamic Justification &amp; Practices" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#a855f7;fontColor=#f8fafc;" vertex="1" parent="lane-backend">
+          <mxGeometry x="60" y="520" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Swimlane: Database -->
+        <mxCell id="lane-db" value="SQLite Database" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#131c31;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="40" width="260" height="740" as="geometry" />
+        </mxCell>
+        <mxCell id="act-save" value="Persist Project &amp;&#xa;Assessment Record" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=#38bdf8;fontColor=#ffffff;" vertex="1" parent="lane-db">
+          <mxGeometry x="40" y="520" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="e1" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-start" target="act-input" />
+        <mxCell id="e2" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-input" target="act-sliders" />
+        <mxCell id="e3" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-sliders" target="act-submit" />
+        <mxCell id="e4" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-submit" target="act-validate" />
+        <mxCell id="e5" value="Valid" style="strokeColor=#10b981;fontColor=#10b981;endArrow=open;" edge="1" parent="1" source="act-validate" target="act-calc-risk" />
+        <mxCell id="e6" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-calc-risk" target="act-calc-sdlc" />
+        <mxCell id="e7" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-calc-sdlc" target="act-rec-engine" />
+        <mxCell id="e8" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-rec-engine" target="act-save" />
+        <mxCell id="e9" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-save" target="act-view-res" />
+        <mxCell id="e10" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="act-view-res" target="act-end" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

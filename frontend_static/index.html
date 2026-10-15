@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NETRISK — Intelligent Risk Assessment & SDLC Decision Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f2fe' stroke-width='2'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>">
+  <style>
+    .landing-nav {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(6, 10, 18, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem 4rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(14, 165, 233, 0.35);
+      color: var(--accent-sky);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 2rem;
+    }
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #00f2fe, #0ea5e9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 780px;
+      margin: 0 auto 2.5rem auto;
+      line-height: 1.7;
+    }
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+    .feature-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+      text-align: left;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      position: relative;
+      transition: all var(--transition-normal);
+    }
+    .feature-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-glow);
+    }
+    .feature-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(14, 165, 233, 0.25);
+      color: var(--accent-cyan);
+      margin-bottom: 1.25rem;
+    }
+    .sdg-banner {
+      background: linear-gradient(135deg, #111a2e 0%, #0c1220 100%);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 3rem;
+      margin: 4rem auto;
+      max-width: 1200px;
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      box-shadow: var(--shadow-lg);
+    }
+    .sdg-emblem {
+      width: 110px;
+      height: 110px;
+      background: #f16e22;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(241, 110, 34, 0.35);
+    }
+    @media (max-width: 992px) {
+      .hero-title { font-size: 2.5rem; }
+      .feature-showcase-grid { grid-template-columns: 1fr; }
+      .sdg-banner { flex-direction: column; text-align: center; gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Landing Topbar -->
+  <header class="landing-nav">
+    <div style="display:flex;align-items:center;gap:0.85rem;">
+      <div class="brand-shield">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-weight:800;font-size:1.15rem;letter-spacing:0.04em;color:#fff;">
+          NETRISK <span class="brand-version">v2.0 SaaS</span>
+        </div>
+        <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">
+          Risk-Aware SDLC Intelligence
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+      <a href="dashboard.html" style="font-size:0.88rem;color:var(--text-secondary);font-weight:500;">Platform Dashboard</a>
+      <a href="project-management.html" style="font-size:0.88rem;color:var(--text-secondary);font-weight:500;">Jira PM</a>
+      <a href="documentation.html" style="font-size:0.88rem;color:var(--text-secondary);font-weight:500;">Documentation</a>
+      <a href="assessment.html" class="btn btn-primary btn-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        New Assessment
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="hero-container">
+    <div class="hero-badge-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      B.Tech Cybersecurity PBL Micro-Project &bull; UN SDG 9 Aligned
+    </div>
+
+    <h1 class="hero-title">
+      Risk-Aware SDLC Model Selection for<br>
+      <span>AI-Based Intrusion Detection Software</span>
+    </h1>
+
+    <p class="hero-sub">
+      NETRISK is an explainable decision-support platform designed for cybersecurity engineering teams.
+      Evaluate 7 critical project risk dimensions, compute mathematical suitability across 5 SDLC paradigms,
+      and track development workflows with synchronized live Jira Cloud and Confluence integration.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="assessment.html" class="btn btn-accent btn-lg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Launch Risk Assessment
+      </a>
+      <a href="dashboard.html" class="btn btn-secondary btn-lg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Open Platform Dashboard
+      </a>
+      <a href="jira-board.html" class="btn btn-secondary btn-lg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>
+        Jira Board (NRASS)
+      </a>
+    </div>
+
+    <!-- 3 Pillars Grid -->
+    <div class="feature-showcase-grid">
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">7-Factor Risk Engine</h3>
+        <p style="font-size:0.86rem;color:var(--text-secondary);line-height:1.6;">
+          Quantifies security criticality, AI/ML complexity, requirement uncertainty, threat volatility, operational impact, compliance, and inverted team experience with rigorous mathematical weighting.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">5 SDLC Scoring Models</h3>
+        <p style="font-size:0.86rem;color:var(--text-secondary);line-height:1.6;">
+          Computes empirical suitability scores across Waterfall, V-Model, Agile, Spiral, and DevSecOps frameworks, highlighting trade-offs and natural-language justification.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">Live Atlassian Ecosystem</h3>
+        <p style="font-size:0.86rem;color:var(--text-secondary);line-height:1.6;">
+          Real-time integration with Jira Cloud Project (<code>NRASS</code>) across 5 Epics, 5 Sprints, and 34 Stories, paired with 6 verified Confluence technical specifications (Space <code>NRSS</code>).
+        </p>
+      </div>
+    </div>
+
+    <!-- SDG 9 Impact Banner -->
+    <div class="sdg-banner">
+      <div class="sdg-emblem">
+        <span style="font-size:1.75rem;font-weight:800;line-height:1;">9</span>
+        <span style="font-size:0.62rem;font-weight:700;text-align:center;text-transform:uppercase;margin-top:4px;">Industry &bull; Innovation &bull; Infrastructure</span>
+      </div>
+      <div style="text-align:left;">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#f59e0b;letter-spacing:0.06em;margin-bottom:0.35rem;">
+          United Nations Sustainable Development Goal 9
+        </div>
+        <h3 style="font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">
+          Building Resilient Digital Infrastructure & Secure AI Innovation
+        </h3>
+        <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6;">
+          AI-based Intrusion Detection Systems form the critical backbone of national cyberdefense and industrial communications.
+          NETRISK enforces disciplined software engineering to prevent vulnerabilities in AI defense pipelines, ensuring secure, compliant, and sustainable infrastructure.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer" style="padding:2rem 3rem;">
+    <div>
+      <span style="font-weight:700;color:#fff;">NETRISK</span> &bull; Software Engineering &amp; Project Management CIAP Micro-Project
+    </div>
+    <div style="display:flex;gap:1.5rem;">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="assessment.html">Assessment</a>
+      <a href="project-management.html">Jira PM</a>
+      <a href="documentation.html">Confluence</a>
+      <a href="settings.html">System Health</a>
+    </div>
+  </footer>
+
+</body>
+</html>

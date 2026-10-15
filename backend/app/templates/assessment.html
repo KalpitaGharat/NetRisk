@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}New Assessment &bull; NETRISK{% endblock %}
+{% block page_title %}Risk Assessment Wizard{% endblock %}
+
+{% block content %}
+<form id="assessment-form" style="display: flex; flex-direction: column; gap: 1.75rem;">
+
+  <!-- Presets Bar -->
+  <div class="card" style="padding: 1rem 1.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; background: var(--bg-card); border-color: rgba(56, 189, 248, 0.2);">
+    <div>
+      <div style="font-weight: 700; color: #fff; font-size: 0.88rem;">Calibrated Academic Presets</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted);">Quickly load empirically validated benchmark scenarios</div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="applyPreset('critical')">
+        <span>Critical Infrastructure (SCADA)</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="applyPreset('enterprise')">
+        <span>Enterprise SOC Threat Hunter</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="applyPreset('edge')">
+        <span>SaaS Gateway Edge-IDS</span>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.75rem; align-items: start;">
+    
+    <!-- Left Column: Form Controls -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      
+      <!-- Project Metadata Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">1. Project Metadata & Operational Context</h2>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="project_name">Project Name <span style="color: var(--risk-very-high);">*</span></label>
+          <input type="text" id="project_name" name="project_name" class="form-control" required placeholder="e.g. NextGen Multi-Layered AI-IDS Defense Hub" value="Tactical Perimeter Zero-Trust IDS" />
+          <div class="form-help">Unique identifier for this software development initiative.</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="project_category">Project Category</label>
+            <select id="project_category" name="category" class="form-control">
+              <option value="Industrial / SCADA Cyber-Defense">Industrial / SCADA Cyber-Defense</option>
+              <option value="Enterprise SOC Threat Detection" selected>Enterprise SOC Threat Detection</option>
+              <option value="Cloud-Native Edge Security">Cloud-Native Edge Security</option>
+              <option value="Research & Adversarial ML Defense">Research & Adversarial ML Defense</option>
+              <option value="Financial & Banking Infrastructure">Financial & Banking Infrastructure</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="project_description">Architecture Scope (Optional)</label>
+            <input type="text" id="project_description" name="description" class="form-control" placeholder="Brief system scope, e.g. wire-speed deep packet inspection" value="Wire-speed deep learning packet inspection with zero-trust egress gating." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Seven Risk Sliders Card -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">2. Seven-Dimensional Risk Calibration</h2>
+            <div class="card-subtitle">Quantify project attributes on a normalized scale [0.0 – 100.0]</div>
+          </div>
+          <span class="badge badge-model">Weights Total: 100%</span>
+        </div>
+
+        <!-- S: Security Criticality (25%) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">Security Criticality</strong>
+              <span class="slider-weight-tag" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">Weight: 25%</span>
+            </div>
+            <div class="slider-val-badge" id="val-s">85</div>
+          </div>
+          <input type="range" id="slider-security" min="0" max="100" value="85" />
+          <div class="form-help">Defended asset sensitivity, confidentiality loss, and catastrophic impact if an intruder breaches the perimeter.</div>
+        </div>
+
+        <!-- A: AI Complexity (20%) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">AI / ML Complexity</strong>
+              <span class="slider-weight-tag" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">Weight: 20%</span>
+            </div>
+            <div class="slider-val-badge" id="val-a">75</div>
+          </div>
+          <input type="range" id="slider-ai" min="0" max="100" value="75" />
+          <div class="form-help">Neural network architecture depth, model drift vulnerability, adversarial evasion, and training data latency.</div>
+        </div>
+
+        <!-- U: Requirement Uncertainty (15%) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">Requirement Uncertainty</strong>
+              <span class="slider-weight-tag" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Weight: 15%</span>
+            </div>
+            <div class="slider-val-badge" id="val-u">50</div>
+          </div>
+          <input type="range" id="slider-uncertainty" min="0" max="100" value="50" />
+          <div class="form-help">Ambiguity and volatility of detection rules, stakeholder feature additions, and changing threat definitions.</div>
+        </div>
+
+        <!-- T: Threat Volatility (15%) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">Threat Volatility</strong>
+              <span class="slider-weight-tag" style="background: rgba(249, 115, 22, 0.15); color: #fb923c;">Weight: 15%</span>
+            </div>
+            <div class="slider-val-badge" id="val-t">80</div>
+          </div>
+          <input type="range" id="slider-threat" min="0" max="100" value="80" />
+          <div class="form-help">Frequency of zero-day exploits, polymorphic signature mutations, and active attacker evasion maneuvers.</div>
+        </div>
+
+        <!-- O: Operational Criticality (10%) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">Operational Criticality</strong>
+              <span class="slider-weight-tag" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8;">Weight: 10%</span>
+            </div>
+            <div class="slider-val-badge" id="val-o">90</div>
+          </div>
+          <input type="range" id="slider-operational" min="0" max="100" value="90" />
+          <div class="form-help">Acceptable false-positive tolerance, line-rate throughput requirements, and zero-downtime tolerance.</div>
+        </div>
+
+        <!-- C: Compliance Requirement (10%) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">Compliance & Statutory Rigor</strong>
+              <span class="slider-weight-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Weight: 10%</span>
+            </div>
+            <div class="slider-val-badge" id="val-c">85</div>
+          </div>
+          <input type="range" id="slider-compliance" min="0" max="100" value="85" />
+          <div class="form-help">Statutory frameworks (ISO 27001, NIST SP 800-53, GDPR, PCI-DSS) and formal audit traceability requirements.</div>
+        </div>
+
+        <!-- E: Team Experience (5% Inverted) -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <div class="slider-title-group">
+              <strong style="color: #fff; font-size: 0.88rem;">Team Experience & Maturity</strong>
+              <span class="slider-weight-tag" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);">Weight: 5% (Inverted)</span>
+            </div>
+            <div class="slider-val-badge" id="val-e">70</div>
+          </div>
+          <input type="range" id="slider-team" min="0" max="100" value="70" />
+          <div class="form-help">Team familiarity with secure MLOps and adversarial ML defense. Converted internally to $\text{Team Risk} = 100 - \text{Experience}$.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Column: Live Risk Preview & Submission -->
+    <div style="position: sticky; top: calc(var(--header-height) + 1.5rem); display: flex; flex-direction: column; gap: 1.25rem;">
+      
+      <!-- Live Preview Card -->
+      <div class="card" style="border-color: rgba(0, 242, 254, 0.3); background: radial-gradient(circle at top right, rgba(0, 242, 254, 0.08), transparent 70%), var(--bg-card);">
+        <div class="card-header">
+          <h3 class="card-title" style="color: var(--cyan); font-size: 0.88rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>Live Risk Meter Preview</span>
+          </h3>
+          <span id="live-risk-badge" class="badge badge-high">HIGH</span>
+        </div>
+
+        <div style="text-align: center; padding: 1.5rem 0.5rem;">
+          <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700;">Calculated Project Risk</div>
+          <div id="live-risk-score" style="font-family: var(--font-mono); font-size: 3rem; font-weight: 800; color: #fff; margin: 0.25rem 0;">76.0%</div>
+          
+          <!-- Progress Bar Meter -->
+          <div style="width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin: 1rem 0 0.5rem;">
+            <div id="live-risk-bar" style="height: 100%; width: 76%; background: var(--risk-very-high); transition: width 0.15s ease, background-color 0.2s ease;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-mono);">
+            <span>0% (LOW)</span>
+            <span>50%</span>
+            <span>100% (CRITICAL)</span>
+          </div>
+        </div>
+
+        <div style="padding: 0.85rem; border-radius: var(--radius-sm); background: var(--bg-elevated); border: 1px solid var(--border); font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">
+          Adjusting parameters dynamically updates the risk score and maps to suitable SDLC models upon submission.
+        </div>
+      </div>
+
+      <!-- Action Buttons Card -->
+      <div class="card">
+        <button type="submit" id="submit-assessment-btn" class="btn btn-cyan btn-lg" style="width: 100%; justify-content: center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Generate Risk Assessment</span>
+        </button>
+        <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem;">
+          Persists to SQLite database and generates model recommendations with explainability.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    window.initAssessmentWizard();
+  });
+</script>
+{% endblock %}

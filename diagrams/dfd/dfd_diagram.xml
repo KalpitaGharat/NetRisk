@@ -1,0 +1,60 @@
+<mxfile host="app.diagrams.net" modified="2026-10-04T07:00:00.000Z" agent="NETRISK" version="22.1.0" type="device">
+  <diagram id="netrisk-dfd" name="Data Flow Diagram (Level 1)">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#0c1220" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- External Entity -->
+        <mxCell id="ent-user" value="Cybersecurity Assessor /&#xa;Faculty Evaluator" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Process 1.0 -->
+        <mxCell id="p1" value="1.0&#xa;Validate &amp; Ingest&#xa;Parameters" style="ellipse;whiteSpace=wrap;html=1;fillColor=#131c31;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="130" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Process 2.0 -->
+        <mxCell id="p2" value="2.0&#xa;Calculate Weighted&#xa;Project Risk" style="ellipse;whiteSpace=wrap;html=1;fillColor=#131c31;strokeColor=#f59e0b;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="540" y="100" width="130" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Process 3.0 -->
+        <mxCell id="p3" value="3.0&#xa;Score SDLC&#xa;Models" style="ellipse;whiteSpace=wrap;html=1;fillColor=#131c31;strokeColor=#10b981;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="540" y="280" width="130" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Process 4.0 -->
+        <mxCell id="p4" value="4.0&#xa;Synthesize Explainable&#xa;Recommendation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#131c31;strokeColor=#a855f7;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="320" y="280" width="140" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Data Store -->
+        <mxCell id="ds-db" value="D1 | SQLite Assessment Store" style="shape=partialRectangle;top=0;bottom=0;fillColor=#1e293b;strokeColor=#06b6d4;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="200" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Data Flows -->
+        <mxCell id="df1" value="Project Specs &amp; Sliders" style="strokeColor=#38bdf8;fontColor=#38bdf8;endArrow=open;entryX=0;entryY=0.5;" edge="1" parent="1" source="ent-user" target="p1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="df2" value="Validated Parameters" style="strokeColor=#38bdf8;fontColor=#94a3b8;endArrow=open;entryX=0;entryY=0.5;" edge="1" parent="1" source="p1" target="p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="df3" value="Risk Score &amp; Level" style="strokeColor=#f59e0b;fontColor=#94a3b8;endArrow=open;entryX=0.5;entryY=0;" edge="1" parent="1" source="p2" target="p3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="df4" value="SDLC Suitability Matrix" style="strokeColor=#10b981;fontColor=#94a3b8;endArrow=open;entryX=1;entryY=0.5;" edge="1" parent="1" source="p3" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="df5" value="Save Record" style="strokeColor=#06b6d4;fontColor=#06b6d4;endArrow=open;entryX=0;entryY=0.5;" edge="1" parent="1" source="p3" target="ds-db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="df6" value="Report, Charts &amp; Practices" style="strokeColor=#a855f7;fontColor=#c084fc;endArrow=open;entryX=0.75;entryY=1;" edge="1" parent="1" source="p4" target="ent-user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

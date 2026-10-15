@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment History &bull; NETRISK{% endblock %}
+{% block page_title %}Assessment History &amp; Audit Ledger{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+  <!-- Page Header & Filters -->
+  <div class="card" style="padding: 1.25rem 1.5rem;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem;">
+      <div>
+        <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff;">Historical Assessment Ledger</h2>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+          Audit trail of past evaluations persisted in SQLite database ({{ assessments|length }} total)
+        </div>
+      </div>
+      <a href="/assessment" class="btn btn-cyan btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        <span>New Assessment</span>
+      </a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+      <!-- Search Input -->
+      <div style="flex: 1; min-width: 220px;">
+        <input type="text" id="history-search" class="form-control" placeholder="Search projects by name..." />
+      </div>
+
+      <!-- Risk Level Filter -->
+      <div style="min-width: 150px;">
+        <select id="filter-risk" class="form-control">
+          <option value="ALL">All Risk Levels</option>
+          <option value="LOW">Low Risk</option>
+          <option value="MODERATE">Moderate Risk</option>
+          <option value="HIGH">High Risk</option>
+          <option value="VERY HIGH">Very High Risk</option>
+        </select>
+      </div>
+
+      <!-- SDLC Model Filter -->
+      <div style="min-width: 150px;">
+        <select id="filter-model" class="form-control">
+          <option value="ALL">All SDLC Models</option>
+          <option value="Waterfall">Waterfall</option>
+          <option value="V-Model">V-Model</option>
+          <option value="Agile">Agile</option>
+          <option value="Spiral">Spiral</option>
+          <option value="DevSecOps">DevSecOps</option>
+        </select>
+      </div>
+
+      <!-- Sort By -->
+      <div style="min-width: 150px;">
+        <select id="sort-by" class="form-control">
+          <option value="date_desc">Newest First</option>
+          <option value="date_asc">Oldest First</option>
+          <option value="risk_desc">Highest Risk First</option>
+          <option value="risk_asc">Lowest Risk First</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Table Card -->
+  <div class="card" style="padding: 0; overflow: hidden;">
+    {% if assessments and assessments|length > 0 %}
+    <div class="table-responsive">
+      <table class="cyber-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Project Name</th>
+            <th>Risk Score</th>
+            <th>Risk Level</th>
+            <th>Primary Recommendation</th>
+            <th>Suitability</th>
+            <th>Alternative Model</th>
+            <th>Date</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="history-table-body">
+          {% for item in assessments %}
+          <tr data-id="{{ item.id }}" data-name="{{ item.project_name }}" data-risk="{{ item.risk_level }}" data-model="{{ item.recommended_model }}" data-score="{{ item.risk_score }}" data-created="{{ item.created_at.isoformat() if item.created_at else '' }}">
+            <td style="font-family: var(--font-mono); color: var(--text-muted);">#{{ item.id }}</td>
+            <td style="font-weight: 600; color: #fff;">{{ item.project_name }}</td>
+            <td style="font-family: var(--font-mono); font-weight: 700;">{{ "%.1f"|format(item.risk_score) }}%</td>
+            <td>
+              <span class="badge {% if item.risk_level == 'LOW' %}badge-low{% elif item.risk_level == 'MODERATE' %}badge-moderate{% elif item.risk_level == 'HIGH' %}badge-high{% else %}badge-very-high{% endif %}">
+                {{ item.risk_level }}
+              </span>
+            </td>
+            <td>
+              <span class="badge badge-model">{{ item.recommended_model }}</span>
+            </td>
+            <td style="font-family: var(--font-mono); color: var(--risk-low); font-weight: 700;">
+              {{ "%.1f"|format(item.recommended_score) }}%
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.78rem;">
+              {{ item.alternative_model }} ({{ "%.1f"|format(item.alternative_score) }}%)
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.75rem;">
+              {{ item.created_at.strftime('%Y-%m-%d') if item.created_at else 'Recent' }}
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.35rem;">
+                <a href="/results/{{ item.id }}" class="btn btn-secondary btn-sm" title="Inspect Results">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </a>
+                <button type="button" class="btn btn-danger btn-sm" title="Delete Assessment" onclick="confirmDeleteAssessment({{ item.id }}, '{{ item.project_name|replace('\'', '\\\'') }}')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3.5rem 1.5rem; color: var(--text-muted);">
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.75rem;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">No Evaluation Records Found</h3>
+      <p style="font-size: 0.8rem; max-width: 440px; margin: 0 auto 1.25rem;">You have not saved any assessments yet. Run the evaluation wizard to store results in the database.</p>
+      <a href="/assessment" class="btn btn-cyan btn-sm">Launch New Assessment</a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 class="modal-title">Confirm Deletion</h3>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('delete-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+        Are you sure you want to permanently delete the evaluation record for <strong id="delete-target-name" style="color: #fff;"></strong>? This action cannot be undone.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('delete-modal')">Cancel</button>
+      <button type="button" id="confirm-delete-btn" class="btn btn-danger btn-sm">Permanently Delete</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    window.initHistoryPage();
+  });
+</script>
+{% endblock %}

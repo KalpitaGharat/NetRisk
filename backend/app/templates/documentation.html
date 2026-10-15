@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Technical Documentation &bull; Confluence Space (NRSS){% endblock %}
+{% block page_title %}Technical Documentation &amp; Architecture{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.75rem;">
+
+  <!-- Header Banner -->
+  <div class="card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff;">Atlassian Confluence Documentation Space</h2>
+        <span class="badge badge-model">Space: {{ space_key or 'NRSS' }}</span>
+        <span class="badge badge-low">VERIFIED SPECIFICATIONS</span>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Primary Technical Specifications stored in Atlassian Confluence Cloud Space &bull; URL: <a href="{{ confluence_url }}" target="_blank" style="color: var(--sky);">{{ confluence_url }} ↗</a>
+      </div>
+    </div>
+
+    <a href="{{ confluence_url }}" target="_blank" class="btn btn-secondary btn-sm">
+      <span>Open Confluence Space (NRSS) ↗</span>
+    </a>
+  </div>
+
+  <!-- Documentation Articles Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.25rem;">
+    {% for page in pages %}
+    <div class="card" style="background: var(--bg-card); display: flex; flex-direction: column; justify-content: space-between; border-color: var(--border);">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+          <span class="badge badge-model" style="font-size: 0.65rem;">DOC-0{{ loop.index }}</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">{{ page.category or 'Specification' }}</span>
+        </div>
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">{{ page.title }}</h3>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+          {{ page.summary or page.description }}
+        </p>
+      </div>
+
+      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 0.72rem; color: var(--cyan); font-family: var(--font-mono);">Confluence NRSS</span>
+        <a href="{{ page.url or confluence_url }}" target="_blank" class="btn btn-secondary btn-sm">
+          <span>Read Document ↗</span>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Academic Mapping Card -->
+  <div class="card" style="background: var(--bg-elevated);">
+    <div class="card-header">
+      <h2 class="card-title">CIAP Methodology &amp; Academic Traceability</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+      <div>
+        <strong style="color: #fff; display: block; margin-bottom: 0.25rem;">1. Deterministic Formulation</strong>
+        Every suitability formula is mathematically derived from risk theory. No black-box or non-deterministic hallucinations are used.
+      </div>
+      <div>
+        <strong style="color: #fff; display: block; margin-bottom: 0.25rem;">2. Empirical Ground Truth</strong>
+        Verified against 8 documented cybersecurity scenarios representing SCADA, Cloud, SOC, and Edge IDS paradigms.
+      </div>
+      <div>
+        <strong style="color: #fff; display: block; margin-bottom: 0.25rem;">3. Atlassian Ecosystem Integration</strong>
+        Full traceability from requirement specification (Confluence NRSS) to sprint backlog and issue tracking (Jira NRASS).
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

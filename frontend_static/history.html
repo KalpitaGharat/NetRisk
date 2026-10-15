@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment History — NETRISK Framework</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">NR</div>
+      <div class="brand-text">
+        <span class="brand-title">NETRISK</span>
+        <span class="brand-subtitle">Risk-Aware SDLC Decision Support</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="assessment.html" class="nav-link">New Assessment</a></li>
+      <li><a href="history.html" class="nav-link active">History</a></li>
+      <li><a href="project-management.html" class="nav-link">Project Management</a></li>
+      <li><a href="http://127.0.0.1:8000/docs" target="_blank" class="nav-link">API Docs ↗</a></li>
+      <li>
+        <span class="sdg-tag">
+          <span>🎯</span> SDG 9
+        </span>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Assessment History</h1>
+        <p class="page-desc">Historical record of all evaluated AI-based IDS projects stored in the local SQLite database.</p>
+      </div>
+      <div>
+        <a href="assessment.html" class="btn btn-accent">
+          <span>+</span> New Assessment
+        </a>
+      </div>
+    </header>
+
+    <div id="history-alert" class="alert alert-danger" style="display: none;"></div>
+
+    <!-- History Data Table Card -->
+    <div class="card">
+      <div class="card-title">
+        <span>Evaluated Projects Log</span>
+        <span id="history-count-badge" class="badge badge-model">0 Total</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Project Name</th>
+              <th>Overall Risk</th>
+              <th>Severity Level</th>
+              <th>Recommended SDLC</th>
+              <th>Suitability</th>
+              <th>Date Evaluated</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                Loading historical assessments...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <strong>NETRISK</strong> — Risk-Aware SDLC Decision-Support System
+      </div>
+      <div>
+        SE & PM CIAP Micro-Project • SDG 9 Aligned
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/history.js"></script>
+</body>
+</html>

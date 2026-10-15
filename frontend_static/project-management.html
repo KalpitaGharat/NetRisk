@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Management — NETRISK Framework</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    /* Integration Specific Styles */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+    .status-live {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .status-demo {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .demo-notice-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .demo-notice-text h4 {
+      font-size: 0.95rem;
+      color: #fbbf24;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .demo-notice-text p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Sprint Cards Grid */
+    .sprints-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .sprint-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .sprint-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-focus);
+    }
+    .sprint-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .sprint-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sprint-dates {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      margin-top: 0.2rem;
+    }
+    .sprint-progress-bar-bg {
+      background: var(--bg-darker);
+      border-radius: 9999px;
+      height: 7px;
+      overflow: hidden;
+      margin: 0.85rem 0 0.5rem 0;
+      border: 1px solid var(--border-subtle);
+    }
+    .sprint-progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #06b6d4);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+    .sprint-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .sprint-goal {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      line-height: 1.4;
+    }
+
+    /* Epic Accordion Cards */
+    .epic-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .epic-header {
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      transition: background-color 0.15s ease;
+    }
+    .epic-header:hover {
+      background: var(--bg-card-hover);
+    }
+    .epic-info h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .epic-tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      background: rgba(6, 182, 212, 0.12);
+      color: var(--accent-cyan);
+      padding: 0.1rem 0.45rem;
+      border-radius: var(--radius-sm);
+    }
+    .epic-summary {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .epic-body {
+      padding: 0 1.5rem 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-dark);
+    }
+    .story-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.88rem;
+    }
+    .story-item:last-child {
+      border-bottom: none;
+    }
+    .story-key {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #38bdf8;
+      min-width: 80px;
+    }
+    .story-title {
+      flex: 1;
+      color: #e2e8f0;
+      margin: 0 1rem;
+    }
+    .story-badge-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .story-badge-progress {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    /* Confluence Grid */
+    .confluence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+    .confluence-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .confluence-card:hover {
+      border-color: #0284c7;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .confluence-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .confluence-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: rgba(2, 132, 199, 0.12);
+      border: 1px solid rgba(2, 132, 199, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .confluence-doc-cat {
+      font-size: 0.72rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .confluence-doc-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 0.15rem;
+      line-height: 1.3;
+    }
+    .confluence-doc-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Activity Feed */
+    .activity-feed {
+      list-style: none;
+      padding: 0;
+    }
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .activity-content {
+      flex: 1;
+    }
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.2rem;
+    }
+    .activity-summary {
+      font-weight: 600;
+      color: #fff;
+      font-size: 0.88rem;
+    }
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+    .activity-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Diagnostics Settings */
+    .settings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .settings-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .settings-table tr td:first-child {
+      color: var(--text-muted);
+      font-weight: 600;
+      width: 240px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">NR</div>
+      <div class="brand-text">
+        <span class="brand-title">NETRISK</span>
+        <span class="brand-subtitle">Risk-Aware SDLC Decision Support</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="assessment.html" class="nav-link">New Assessment</a></li>
+      <li><a href="history.html" class="nav-link">History</a></li>
+      <li><a href="project-management.html" class="nav-link active">Project Management</a></li>
+      <li><a href="http://127.0.0.1:8000/docs" target="_blank" class="nav-link">API Docs ↗</a></li>
+      <li>
+        <span class="sdg-tag">
+          <span>🎯</span> SDG 9
+        </span>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Project Management &amp; Agile Tracking</h1>
+        <p class="page-desc">
+          Unified Atlassian Jira Agile progress tracking and Confluence documentation monitoring for NETRISK.
+        </p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span id="jira-connection-pill" class="status-pill status-demo">
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#f59e0b;"></span>
+          DEMO MODE
+        </span>
+        <a id="jira-board-btn" href="https://sakec-team-bcq481n1.atlassian.net/jira/software/projects/NRASS/boards" target="_blank" class="btn btn-secondary btn-sm">
+          Open Jira Board ↗
+        </a>
+      </div>
+    </header>
+
+    <!-- Demo Mode / Connection Status Notice -->
+    <div id="demo-mode-banner" class="demo-notice-banner">
+      <div class="demo-notice-text">
+        <h4>⚡ Demo Mode Active: Structured CIAP Micro-Project Data</h4>
+        <p id="demo-banner-desc">
+          Jira Cloud API credentials are not yet configured in <code>.env</code>. The interface displays authentic Sprint and Epic structures modeled directly on your NETRISK project (Project Key: <strong>NRASS</strong>).
+        </p>
+      </div>
+      <div>
+        <a href="#integration-settings" class="btn btn-secondary btn-sm">View Settings &amp; Diagnostics ↓</a>
+      </div>
+    </div>
+
+    <!-- Section A: Project Overview Metrics Grid -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon-box icon-blue">📋</div>
+        <div class="metric-content">
+          <span class="metric-label">Project Key</span>
+          <span class="metric-value" id="val-jira-key">NRASS</span>
+          <span class="metric-sub" id="val-jira-name">NETRISK — Risk-Aware SDLC</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-box icon-cyan">🎯</div>
+        <div class="metric-content">
+          <span class="metric-label">Overall Completion</span>
+          <span class="metric-value" id="val-jira-pct">86.4%</span>
+          <span class="metric-sub">Across 5 Planned Sprints</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-box icon-purple">📚</div>
+        <div class="metric-content">
+          <span class="metric-label">Epics &amp; Sprints</span>
+          <span class="metric-value"><span id="val-jira-epics">5</span> / <span id="val-jira-sprints">5</span></span>
+          <span class="metric-sub">5 Epics • 5 Sprints</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-box icon-orange">✅</div>
+        <div class="metric-content">
+          <span class="metric-label">User Stories</span>
+          <span class="metric-value"><span id="val-jira-done">19</span> / <span id="val-jira-total">22</span></span>
+          <span class="metric-sub"><span id="val-jira-pending">3</span> Stories In Progress/To Do</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section B: 5 Sprint Progress Cards -->
+    <section style="margin-bottom: 2.5rem;">
+      <div class="card-title">
+        <span>Sprint Velocity &amp; Progress (5 Sprints)</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">CIAP Development Milestones</span>
+      </div>
+      <div id="sprints-container" class="sprints-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Layout: Section C (Epics) + Section D (Task Status Chart) -->
+    <section style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;" class="results-grid">
+      <!-- Section C: Epic Tracking -->
+      <div>
+        <div class="card-title">
+          <span>Epic &amp; User Story Breakdown</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Click to expand stories</span>
+        </div>
+        <div id="epics-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Section D: Task Status Visualization & Summary -->
+      <div>
+        <div class="card" style="height: 100%;">
+          <div class="card-title">
+            <span>Workflow Status Distribution</span>
+            <span class="badge badge-model">Jira Lifecycle</span>
+          </div>
+          <div style="position: relative; height: 240px; margin: 1rem 0;">
+            <canvas id="jiraStatusChart"></canvas>
+          </div>
+          <div id="status-legend-stats" style="margin-top: 1rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section F: Confluence Documentation Integration -->
+    <section style="margin-bottom: 2.5rem;">
+      <div class="card-title">
+        <span>Confluence Project Documentation (Space: NRSS)</span>
+        <a href="https://sakec-team-bcq481n1.atlassian.net/wiki/spaces/NRSS/overview" target="_blank" class="btn btn-secondary btn-sm">
+          Open Confluence Space ↗
+        </a>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Direct access to the 6 verified architectural and methodology documents authored for this project.
+      </p>
+      <div id="confluence-container" class="confluence-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Section E: Recent Project Activity -->
+    <section style="margin-bottom: 2.5rem;">
+      <div class="card">
+        <div class="card-title">
+          <span>Recent Project Activity &amp; Audit Log</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">Jira Audit Trail</span>
+        </div>
+        <ul id="activity-container" class="activity-feed">
+          <!-- Rendered dynamically -->
+        </ul>
+      </div>
+    </section>
+
+    <!-- Section G: Integration Settings & Diagnostics -->
+    <section id="integration-settings" style="margin-bottom: 2rem;">
+      <div class="card">
+        <div class="card-title">
+          <span>Integration Settings &amp; Connection Diagnostics</span>
+          <button id="btn-refresh-jira" class="btn btn-secondary btn-sm">
+            🔄 Test Connection / Refresh
+          </button>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Connection metadata for Atlassian Cloud. Credentials are strictly managed in the server environment (<code>backend/.env</code>) and are never exposed to browser clients.
+        </p>
+
+        <table class="settings-table">
+          <tbody>
+            <tr>
+              <td>Connection Status:</td>
+              <td id="diag-conn-status">Checking...</td>
+            </tr>
+            <tr>
+              <td>Integration Mode:</td>
+              <td id="diag-mode">Demo Mode</td>
+            </tr>
+            <tr>
+              <td>Atlassian Cloud Host:</td>
+              <td style="font-family: var(--font-mono);" id="diag-host">https://sakec-team-bcq481n1.atlassian.net</td>
+            </tr>
+            <tr>
+              <td>Configured Jira Project Key:</td>
+              <td style="font-family: var(--font-mono); font-weight: 700; color: #38bdf8;" id="diag-project-key">NRASS</td>
+            </tr>
+            <tr>
+              <td>Configured Confluence Space Key:</td>
+              <td style="font-family: var(--font-mono); font-weight: 700; color: #06b6d4;" id="diag-space-key">NRSS</td>
+            </tr>
+            <tr>
+              <td>Security &amp; Secret Isolation:</td>
+              <td style="color: #10b981;">🛡️ Verified: Zero API tokens or passwords exposed in client scripts.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <strong>NETRISK</strong> — Risk-Aware SDLC Decision-Support System
+      </div>
+      <div>
+        SE & PM CIAP Micro-Project • Jira &amp; Confluence Integrated
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/project-management.js"></script>
+</body>
+</html>

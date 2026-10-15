@@ -1,0 +1,65 @@
+<mxfile host="app.diagrams.net" modified="2026-10-04T07:00:00.000Z" agent="NETRISK" version="22.1.0" type="device">
+  <diagram id="netrisk-decision-flow" name="SDLC Decision Flowchart">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#0c1220" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Decision Tree Nodes -->
+        <mxCell id="d-start" value="Project Profile Input&#xa;(7 Parameters &amp; Risk Score R)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=#38bdf8;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Condition 1: Waterfall -->
+        <mxCell id="c-wf" value="Are Requirements &amp; Threats&#xa;Highly Stable?&#xa;(Req Uncert &lt; 25% &amp; Threat Vol &lt; 25%)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="380" y="130" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-wf" value="Recommend: WATERFALL&#xa;(Predictable, phased linear gates)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#38bdf8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="155" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Condition 2: V-Model -->
+        <mxCell id="c-vm" value="High Security, Operational&#xa;Uptime &amp; Strict Compliance?&#xa;(Sec &gt; 70%, Ops &gt; 70%, Comp &gt; 70%)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#6366f1;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="380" y="270" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-vm" value="Recommend: V-MODEL&#xa;(Symmetric verification &amp; validation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#6366f1;fontColor=#a5b4fc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="295" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Condition 3: Spiral -->
+        <mxCell id="c-sp" value="High AI/ML Complexity &amp;&#xa;Significant Security Risk?&#xa;(AI &gt; 70% &amp; Sec &gt; 70%)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="380" y="410" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-sp" value="Recommend: SPIRAL&#xa;(Risk-driven prototyping cycles)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#fbbf24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="435" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Condition 4: DevSecOps vs Agile -->
+        <mxCell id="c-dso" value="Extreme Threat Volatility&#xa;&amp; High Security Need?&#xa;(Threat &gt; 70% &amp; Sec &gt; 65%)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#ef4444;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="380" y="550" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="leaf-dso" value="Recommend: DEVSECOPS&#xa;(Continuous automated CI/CD security)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#ef4444;fontColor=#f87171;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="575" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leaf-agile" value="Recommend: AGILE&#xa;(Rapid sprint-based adaptation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#10b981;fontColor=#34d399;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="700" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e0" style="strokeColor=#38bdf8;endArrow=open;" edge="1" parent="1" source="d-start" target="c-wf" />
+        <mxCell id="e-wf-yes" value="YES" style="strokeColor=#10b981;fontColor=#10b981;endArrow=open;" edge="1" parent="1" source="c-wf" target="leaf-wf" />
+        <mxCell id="e-wf-no" value="NO" style="strokeColor=#ef4444;fontColor=#ef4444;endArrow=open;" edge="1" parent="1" source="c-wf" target="c-vm" />
+
+        <mxCell id="e-vm-yes" value="YES" style="strokeColor=#10b981;fontColor=#10b981;endArrow=open;" edge="1" parent="1" source="c-vm" target="leaf-vm" />
+        <mxCell id="e-vm-no" value="NO" style="strokeColor=#ef4444;fontColor=#ef4444;endArrow=open;" edge="1" parent="1" source="c-vm" target="c-sp" />
+
+        <mxCell id="e-sp-yes" value="YES" style="strokeColor=#10b981;fontColor=#10b981;endArrow=open;" edge="1" parent="1" source="c-sp" target="leaf-sp" />
+        <mxCell id="e-sp-no" value="NO" style="strokeColor=#ef4444;fontColor=#ef4444;endArrow=open;" edge="1" parent="1" source="c-sp" target="c-dso" />
+
+        <mxCell id="e-dso-yes" value="YES" style="strokeColor=#10b981;fontColor=#10b981;endArrow=open;" edge="1" parent="1" source="c-dso" target="leaf-dso" />
+        <mxCell id="e-dso-no" value="NO (Adaptive Flow)" style="strokeColor=#ef4444;fontColor=#ef4444;endArrow=open;" edge="1" parent="1" source="c-dso" target="leaf-agile" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

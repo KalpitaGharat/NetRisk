@@ -1,0 +1,69 @@
+<mxfile host="app.diagrams.net" modified="2026-10-04T07:00:00.000Z" agent="NETRISK" version="22.1.0" type="device">
+  <diagram id="netrisk-architecture" name="System Architecture">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#0c1220" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Client Layer Container -->
+        <mxCell id="client-box" value="Presentation Tier (Vanilla Frontend)" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#131c31;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="80" width="300" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="Landing Page&#xa;(index.html - SDG 9)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="client-box">
+          <mxGeometry x="30" y="50" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="Assessment Form&#xa;(assessment.html - Live Sliders)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="client-box">
+          <mxGeometry x="30" y="120" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Results &amp; Analytics&#xa;(results.html - Chart.js)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="client-box">
+          <mxGeometry x="30" y="190" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="Operational Dashboard&#xa;(dashboard.html - Metrics)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="client-box">
+          <mxGeometry x="30" y="260" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="API Client &amp; State Service&#xa;(api.js / Fetch API)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=#38bdf8;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="client-box">
+          <mxGeometry x="30" y="340" width="240" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Application Layer Container -->
+        <mxCell id="app-box" value="Application Tier (FastAPI REST Service)" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#131c31;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="80" width="340" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="REST Endpoints &amp; Routers&#xa;(/api/assessments, /api/dashboard, /api/models)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#06b6d4;fontColor=#f8fafc;" vertex="1" parent="app-box">
+          <mxGeometry x="30" y="50" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="Risk Engine&#xa;(7 Weighted Security/ML Factors)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#f59e0b;fontColor=#f8fafc;" vertex="1" parent="app-box">
+          <mxGeometry x="30" y="125" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="SDLC Engine&#xa;(5 Model Suitability Formulas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#10b981;fontColor=#f8fafc;" vertex="1" parent="app-box">
+          <mxGeometry x="30" y="195" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="Recommendation Engine&#xa;(Explainability &amp; Practice Synthesis)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#a855f7;fontColor=#f8fafc;" vertex="1" parent="app-box">
+          <mxGeometry x="30" y="265" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" value="SQLAlchemy ORM &amp; Pydantic&#xa;(Schema Validation &amp; Mapping)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=#38bdf8;fontColor=#ffffff;" vertex="1" parent="app-box">
+          <mxGeometry x="30" y="340" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Persistence Layer Container -->
+        <mxCell id="db-box" value="Data Tier (Storage Engine)" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#131c31;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="80" width="240" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="SQLite Database&#xa;(database/netrisk.db)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;" vertex="1" parent="db-box">
+          <mxGeometry x="45" y="80" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="Entities:&#xa;• projects&#xa;• assessments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a0f1d;strokeColor=#1e293b;fontColor=#94a3b8;align=left;" vertex="1" parent="db-box">
+          <mxGeometry x="35" y="220" width="170" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Connectors -->
+        <mxCell id="conn1" value="JSON over HTTP/REST" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#38bdf8;fontColor=#38bdf8;strokeWidth=2;" edge="1" parent="1" source="c5" target="a1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn2" value="SQLAlchemy Driver" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#06b6d4;fontColor=#06b6d4;strokeWidth=2;" edge="1" parent="1" source="a5" target="d1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
