@@ -54,6 +54,11 @@ NETRISK uses a modern **decoupled dual-tier enterprise architecture**:
 │   │                                                                                │   │
 │   │  • Vite + React 18 + Tailwind CSS + Recharts + Lucide Icons                    │   │
 │   │                                                                                │   │
+│   │  • ACCESS CONTROL & SECURITY PORTAL                                            │   │
+│   │    ├── Enterprise Security Authentication Portal (LoginPage)                   │   │
+│   │    ├── 1-Click Capstone Demo Profiles (Kalpita Gharat & Faculty Evaluator)     │   │
+│   │    └── Role-Based Clearance (Level 3-5 Clearance & Session Management)         │   │
+│   │                                                                                │   │
 │   │  • RISK INTELLIGENCE                                                           │   │
 │   │    ├── Executive Dashboard (Hero Showcase, Dropdown Selector, Dual Grid)       │   │
 │   │    ├── New Assessment Wizard (7-Factor Sliders, Baseline Presets, Live Gauge)  │   │
@@ -77,7 +82,7 @@ NETRISK uses a modern **decoupled dual-tier enterprise architecture**:
 │                                           │ REST API Calls (/api/*)                    │
 │                                           ▼                                            │
 │   ┌────────────────────────────────────────────────────────────────────────────────┐   │
-│   │                   FASTAPI BACKEND CORE & ENGINES (PORT 8000)                   │   │
+│   │                   FASTAPI BACKEND CORE & ENGINES (PORT 8001)                   │   │
 │   │                                                                                │   │
 │   │  ┌─────────────────────────┐  ┌─────────────────────────┐  ┌────────────────┐  │   │
 │   │  │    Risk Calculation     │  │     SDLC Suitability    │  │ Recommendation │  │   │
@@ -86,7 +91,7 @@ NETRISK uses a modern **decoupled dual-tier enterprise architecture**:
 │   │                                                                                │   │
 │   │  ┌─────────────────────────┐  ┌─────────────────────────┐  ┌────────────────┐  │   │
 │   │  │ SQLite Database Layer   │  │ Dynamic Data Service    │  │ Compiled SPA   │  │   │
-│   │  │ (SQLAlchemy 2.0 ORM)    │  │ (database/netrisk.db)   │  │ Mount (/app)   │  │   │
+│   │  │ (SQLAlchemy 2.0 ORM)    │  │ (database/netrisk.db)   │  │ Mount (/ & /app│  │   │
 │   │  └─────────────────────────┘  └─────────────────────────┘  └────────────────┘  │   │
 │   └────────────────────────────────────────────────────────────────────────────────┘   │
 └────────────────────────────────────────────────────────────────────────────────────────┘
@@ -243,7 +248,7 @@ run.bat
 
 **1. Launch FastAPI Backend:**
 ```powershell
-.\.venv\Scripts\python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
+.\.venv\Scripts\python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8001
 ```
 
 **2. Launch React Frontend:**
@@ -253,9 +258,9 @@ npm run dev
 ```
 
 Open your browser at:
-- **React Frontend:** **`http://localhost:5501`**
-- **FastAPI Core & REST API:** **`http://127.0.0.1:8000`**
-- **FastAPI Compiled SPA:** **`http://127.0.0.1:8000/app`**
+- **React Frontend (Live Hot-Reload):** **`http://localhost:5501`**
+- **FastAPI Core & REST API:** **`http://127.0.0.1:8001`**
+- **FastAPI Compiled SPA:** **`http://127.0.0.1:8001/app`**
 
 ---
 
