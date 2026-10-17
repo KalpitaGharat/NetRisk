@@ -10,7 +10,7 @@ from sqlalchemy import text
 
 from .config import settings
 from .database import init_db, engine
-from .routers import models_router, projects_router, assessments_router, integrations_router, web_router
+from .routers import models_router, projects_router, assessments_router, integrations_router, web_router, auth_router
 from .routers.web import page_landing
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -99,7 +99,8 @@ def root(request: Request):
         "status": "operational",
     }
 
-# Health check endpoint
+# Health check endpoints (/health and /api/health)
+@app.get("/health", tags=["System"])
 @app.get("/api/health", tags=["System"])
 def health_check():
     db_status = "operational"
@@ -121,13 +122,16 @@ app.include_router(models_router)
 app.include_router(projects_router)
 app.include_router(assessments_router)
 app.include_router(integrations_router)
+app.include_router(auth_router)
 
 # Mount Server-Rendered Web UI Router
 app.include_router(web_router)
 
-# Mount Compiled React Application Route
+# Mount Compiled React Application Route and SPA browser routes
 @app.get("/app", response_class=HTMLResponse, tags=["React Frontend"])
 @app.get("/app/{full_path:path}", response_class=HTMLResponse, tags=["React Frontend"])
+@app.get("/login", response_class=HTMLResponse, tags=["React Frontend"])
+@app.get("/sdlc-comparison", response_class=HTMLResponse, tags=["React Frontend"])
 def serve_react_app(full_path: str = ""):
     index_file = DIST_DIR / "index.html"
     if index_file.exists():

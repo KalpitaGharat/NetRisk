@@ -1,9 +1,9 @@
 /**
  * NETRISK - Client API Communication Service
- * Connects to FastAPI backend running on port 8001
+ * Connects to FastAPI backend using standard relative paths
  */
 
-const BASE_URL = window.NETRISK_API_URL || (typeof window !== "undefined" && (window.location.port === "5501" || window.location.port === "8001" || window.location.port === "8000") ? "" : "http://127.0.0.1:8001");
+const BASE_URL = (typeof window !== "undefined" && window.NETRISK_API_URL) ? window.NETRISK_API_URL : "";
 
 export class NetRiskAPI {
   static getBaseUrl() {
@@ -12,9 +12,11 @@ export class NetRiskAPI {
 
   static async request(endpoint, options = {}) {
     const url = `${BASE_URL}${endpoint}`;
+    const token = typeof localStorage !== "undefined" ? localStorage.getItem("netrisk_token") : null;
     const defaultHeaders = {
       "Content-Type": "application/json",
       "Accept": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
     };
 
     const config = {
@@ -47,15 +49,33 @@ export class NetRiskAPI {
     } catch (err) {
       console.error(`[NETRISK API Error] ${options.method || 'GET'} ${url}:`, err);
       if (err.name === "TypeError" && err.message.includes("fetch")) {
-        throw new Error(`Cannot connect to backend server at ${BASE_URL}. Ensure the FastAPI server is running on port 8000.`);
+        throw new Error(`Cannot connect to backend server. Ensure the NETRISK FastAPI service is reachable.`);
       }
       throw err;
     }
   }
 
+  // Authentication
+  static login(credentials) {
+    return this.request("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    });
+  }
+
+  static logout() {
+    return this.request("/api/auth/logout", {
+      method: "POST",
+    });
+  }
+
+  static getSession() {
+    return this.request("/api/auth/me");
+  }
+
   // Health
   static checkHealth() {
-    return this.request("/api/health");
+    return this.request("/health");
   }
 
   // Metadata

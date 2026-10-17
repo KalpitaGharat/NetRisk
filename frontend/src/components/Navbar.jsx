@@ -7,7 +7,8 @@ export default function Navbar({
   isCollapsed, 
   setIsCollapsed, 
   onMobileMenuToggle,
-  currentUser
+  currentUser,
+  onLogout
 }) {
   const tabLabels = {
     dashboard: "Executive Dashboard",

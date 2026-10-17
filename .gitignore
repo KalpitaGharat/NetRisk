@@ -38,8 +38,10 @@ frontend/.vite/
 # Database
 database/*.db
 database/*.sqlite
+database/*.sqlite3
 database/*.db-journal
 *.sqlite
+*.sqlite3
 *.db
 
 # Environment variables
@@ -71,4 +73,19 @@ _archived_web_frontend/
 !frontend_static/**
 !backend/app/templates/**
 html.tpl
+
+# Infrastructure & Terraform State
+terraform/.terraform/
+.terraform/
+terraform/terraform.tfstate*
+terraform/*.tfstate*
+*.tfstate*
+
+# Local sensitive notes and credentials
+jenkins/*.txt
+jenkins/httpscicresearch.caCICDatasetCIC-ID.txt
+
+# Local diagnostic and scratch test scripts
+scripts/test_container.ps1
+scripts/
 

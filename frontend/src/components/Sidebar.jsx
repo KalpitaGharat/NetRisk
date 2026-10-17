@@ -20,7 +20,8 @@ export default function Sidebar({
   setCurrentTab, 
   isCollapsed, 
   setIsCollapsed,
-  currentUser 
+  currentUser,
+  onLogout
 }) {
   const navSections = [
     {

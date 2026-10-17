@@ -8,15 +8,18 @@ import {
   KeyRound, 
   Eye, 
   EyeOff,
-  CheckCircle2
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
+import { NetRiskAPI } from '../api';
 
 export default function LoginPage({ onLoginSuccess, currentUser, onBackToDashboard }) {
   const [username, setUsername] = useState('kalpita.gharat');
-  const [password, setPassword] = useState('••••••••••••');
+  const [password, setPassword] = useState('architect-sec-2026');
   const [role, setRole] = useState('Lead Security Architect');
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [authError, setAuthError] = useState(null);
 
   const roles = [
     { id: 'lead', title: 'Lead Security Architect', clearance: 'Level 4: Full Read/Write & Deployment' },
@@ -24,38 +27,54 @@ export default function LoginPage({ onLoginSuccess, currentUser, onBackToDashboa
     { id: 'evaluator', title: 'CIAP Faculty Evaluator', clearance: 'Level 5: Academic Audit & Assessment Verification' },
   ];
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e?.preventDefault();
+    setAuthError(null);
     setIsAuthenticating(true);
-    setTimeout(() => {
-      setIsAuthenticating(false);
-      if (onLoginSuccess) {
-        onLoginSuccess({
-          name: username === 'kalpita.gharat' ? 'Kalpita Gharat' : username,
-          role: role,
-          clearance: roles.find(r => r.title === role)?.clearance || 'Level 4 Security Clearance',
-          loggedAt: new Date().toISOString(),
-        });
+    try {
+      const res = await NetRiskAPI.login({
+        username: username.trim(),
+        password: password.trim(),
+        role: role,
+      });
+      if (res && res.token) {
+        localStorage.setItem('netrisk_token', res.token);
       }
-    }, 600);
+      if (onLoginSuccess && res.user) {
+        onLoginSuccess(res.user);
+      }
+    } catch (err) {
+      setAuthError(err.message || 'Authentication failed. Please verify credentials.');
+    } finally {
+      setIsAuthenticating(false);
+    }
   };
 
-  const handleQuickDemoLogin = (selectedRole, demoName) => {
+  const handleQuickDemoLogin = async (selectedRole, demoName) => {
     setUsername(demoName);
+    setPassword('demo-access-2026');
     setRole(selectedRole);
+    setAuthError(null);
     setIsAuthenticating(true);
-    setTimeout(() => {
-      setIsAuthenticating(false);
-      if (onLoginSuccess) {
-        onLoginSuccess({
-          name: demoName === 'kalpita.gharat' ? 'Kalpita Gharat' : (demoName === 'faculty.evaluator' ? 'Prof. CIAP Evaluator' : 'SOC Analyst'),
-          role: selectedRole,
-          clearance: roles.find(r => r.title === selectedRole)?.clearance || 'Level 4 Security Clearance',
-          loggedAt: new Date().toISOString(),
-        });
+    try {
+      const res = await NetRiskAPI.login({
+        username: demoName,
+        password: 'demo-access-2026',
+        role: selectedRole,
+      });
+      if (res && res.token) {
+        localStorage.setItem('netrisk_token', res.token);
       }
-    }, 500);
+      if (onLoginSuccess && res.user) {
+        onLoginSuccess(res.user);
+      }
+    } catch (err) {
+      setAuthError(err.message || 'Demo authentication failed.');
+    } finally {
+      setIsAuthenticating(false);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-cyber-bg flex items-center justify-center p-4 relative overflow-hidden">
@@ -94,6 +113,17 @@ export default function LoginPage({ onLoginSuccess, currentUser, onBackToDashboa
             <span>SECURE ACCESS PORTAL</span>
           </div>
         </div>
+
+        {/* Authentication Error Banner */}
+        {authError && (
+          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/40 text-rose-300 text-xs flex items-start gap-2.5 animate-in fade-in duration-200">
+            <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <span className="font-bold block text-rose-200">Authentication Failed</span>
+              <span>{authError}</span>
+            </div>
+          </div>
+        )}
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4">

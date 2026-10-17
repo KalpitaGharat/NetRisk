@@ -10,7 +10,7 @@ DEFAULT_DB_PATH = PROJECT_ROOT / "database" / "netrisk.db"
 class Settings(BaseSettings):
     PROJECT_NAME: str = "NETRISK"
     PROJECT_FULL_TITLE: str = "Risk-Aware SDLC Model Selection for AI-Based Intrusion Detection Software"
-    VERSION: str = "1.0.0"
+    VERSION: str = "2.0.0"
     APP_ENV: str = "development"
     DEBUG: bool = True
     DATABASE_URL: str = (

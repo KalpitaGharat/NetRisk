@@ -19,7 +19,7 @@ pipeline {
         REPO_URL       = 'https://github.com/KalpitaGharat/NetRisk.git'
         DEFAULT_BRANCH = 'main'
         IMAGE_NAME     = 'netrisk'
-        IMAGE_TAG      = '1.0'
+        IMAGE_TAG      = '2.0'
         VENV_DIR       = '.venv-ci'
     }
 

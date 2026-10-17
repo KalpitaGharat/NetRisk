@@ -267,3 +267,81 @@ def test_dashboard_comprehensive_intelligence_metrics():
     client.delete(f"/api/assessments/{id1}")
     client.delete(f"/api/assessments/{id2}")
 
+def test_standard_health_endpoint():
+    resp = client.get("/health")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "healthy"
+    assert data["database"] == "operational"
+    assert data["version"] == "2.0.0"
+
+def test_auth_login_valid_lead_architect():
+    payload = {
+        "username": "kalpita.gharat",
+        "password": "valid-architect-pass",
+        "role": "Lead Security Architect"
+    }
+    resp = client.post("/api/auth/login", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "authenticated"
+    assert data["token"].startswith("netrisk_sess_")
+    assert data["user"]["name"] == "Kalpita Gharat"
+    assert "Level 4" in data["user"]["clearance"]
+
+def test_auth_login_valid_faculty_evaluator():
+    payload = {
+        "username": "faculty.evaluator",
+        "password": "valid-faculty-pass",
+        "role": "CIAP Faculty Evaluator"
+    }
+    resp = client.post("/api/auth/login", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "authenticated"
+    assert data["user"]["name"] == "Prof. CIAP Evaluator"
+    assert "Level 5" in data["user"]["clearance"]
+
+def test_auth_login_invalid_username():
+    payload = {
+        "username": "unauthorized.intruder",
+        "password": "attempted-password"
+    }
+    resp = client.post("/api/auth/login", json=payload)
+    assert resp.status_code == 401
+    assert "detail" in resp.json()
+    assert "Invalid identity or access credentials" in resp.json()["detail"]
+
+def test_auth_login_invalid_password_short():
+    payload = {
+        "username": "kalpita.gharat",
+        "password": "x"
+    }
+    resp = client.post("/api/auth/login", json=payload)
+    assert resp.status_code == 401
+
+def test_auth_me_protected_and_logout():
+    # Attempt without token -> 401
+    unauth = client.get("/api/auth/me")
+    assert unauth.status_code == 401
+
+    # Login to obtain token
+    login_resp = client.post("/api/auth/login", json={
+        "username": "soc.analyst",
+        "password": "analyst-password-2026"
+    })
+    token = login_resp.json()["token"]
+
+    # Access protected route with Bearer token
+    auth_resp = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert auth_resp.status_code == 200
+    assert auth_resp.json()["username"] == "soc.analyst"
+
+    # Terminate session
+    logout_resp = client.post("/api/auth/logout", headers={"Authorization": f"Bearer {token}"})
+    assert logout_resp.status_code == 200
+
+    # Token is now invalid
+    revoked = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert revoked.status_code == 401
+

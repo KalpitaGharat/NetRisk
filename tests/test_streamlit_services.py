@@ -24,14 +24,23 @@ from backend.app.services.sdlc_engine import SDLCEngine
 from backend.app.services.recommendation_engine import RecommendationEngine
 
 
+
 def test_get_all_projects():
-    """Verify that projects can be retrieved from SQLite."""
+    """Verify that projects can be created and retrieved from SQLite."""
+    created = get_or_create_project(
+        name="Project Retrieval Test",
+        description="Test project for retrieval verification",
+    )
+
     projects = get_all_projects()
+
     assert isinstance(projects, list)
     assert len(projects) >= 1
-    sample = projects[0]
-    assert "id" in sample
-    assert "name" in sample
+
+    matching = [project for project in projects if project["id"] == created.id]
+    assert len(matching) == 1
+    assert matching[0]["name"] == "Project Retrieval Test"
+
 
 
 def test_get_or_create_project():

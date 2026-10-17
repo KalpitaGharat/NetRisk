@@ -309,6 +309,82 @@ docker exec -it netrisk-app /bin/sh
 ### C. SonarQube & Trivy Security Scanning
 - **Trivy Vulnerability Scan**:
   ```powershell
-  trivy image --severity HIGH,CRITICAL netrisk:1.0
+  trivy image --severity HIGH,CRITICAL netrisk:2.0
   ```
 - **SonarQube Static Analysis**: Non-root user permissions, zero hardcoded credentials, and pinned base images ensure clean security compliance scores.
+
+---
+
+## 13. NETRISK v2.0 Production Deployment Runbook (AWS EC2: `35.154.143.72`)
+
+### Root-Cause Resolution Summary
+- **Root Cause 1 (`ReferenceError: onLogout is not defined`)**: When logging in, `App.jsx` rendered `<Navbar onLogout={handleLogout} />`. In `Navbar.jsx`, line 61 evaluated `{onLogout && (`, but `onLogout` was omitted from `Navbar`'s destructured parameter list. In JavaScript strict mode, evaluating an undeclared identifier threw `ReferenceError: onLogout is not defined`, unmounting the React DOM tree and causing a white screen.
+- **Root Cause 2 (Client-Side Hardcoded IP Fallback)**: In `api.js`, `BASE_URL` fell back to `"http://127.0.0.1:8001"`, which pointed to the end-user's local workstation rather than the remote EC2 server. Corrected to pure relative path `""` so all browser requests target `http://35.154.143.72:8000/api/*` seamlessly.
+- **Root Cause 3 (Backend Authentication & Health Probe)**: Implemented standard `/api/auth/login`, `/api/auth/logout`, and `/health` endpoints in FastAPI.
+
+### Step 1: Local Image Build & Tagging (Completed)
+```bash
+# Build verified local v2.0 image
+docker build -t netrisk:2.0 .
+
+# Tag image for AWS Public ECR repository
+docker tag netrisk:2.0 public.ecr.aws/u2v8m6a3/netrisk:2.0
+```
+
+### Step 2: Authenticate & Push to AWS ECR Public
+```bash
+# Obtain authentication token and login to AWS ECR Public (us-east-1 registry endpoint)
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u2v8m6a3
+
+# Push version 2.0 to AWS Public ECR (Requires user approval)
+docker push public.ecr.aws/u2v8m6a3/netrisk:2.0
+```
+
+### Step 3: Deploy Version 2.0 on EC2 Instance (`35.154.143.72`)
+SSH into the EC2 instance and execute the atomic container swap:
+```bash
+# 1. Connect to EC2
+ssh -i "your-key.pem" ubuntu@35.154.143.72
+
+# 2. Authenticate Docker with AWS Public ECR
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u2v8m6a3
+
+# 3. Pull newly published v2.0 image
+docker pull public.ecr.aws/u2v8m6a3/netrisk:2.0
+
+# 4. Gracefully stop and remove the active 1.0 container (preserving image for rollback)
+docker stop netrisk-app || true
+docker rm netrisk-app || true
+
+# 5. Launch the v2.0 container on port 8000 with persistent SQLite volume
+docker run -d \
+  --name netrisk-app \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -v /home/ubuntu/netrisk/database:/app/database \
+  public.ecr.aws/u2v8m6a3/netrisk:2.0
+
+# 6. Verify container health and startup logs
+docker ps
+docker logs --tail 30 netrisk-app
+curl -s http://localhost:8000/health
+```
+
+### Step 4: Verification in Browser
+Open: **`http://35.154.143.72:8000`**
+1. Enter identity (`kalpita.gharat`) or click **1-Click Capstone Demo Profiles**.
+2. Click **Authenticate Session**.
+3. Verify that the Executive Dashboard immediately renders without errors, displaying all risk analytics, SDLC charts, and system gauges.
+
+### Emergency Rollback Procedure (Back to v1.0)
+If rollback is needed for any reason, revert immediately using the preserved `1.0` image:
+```bash
+docker stop netrisk-app
+docker rm netrisk-app
+docker run -d \
+  --name netrisk-app \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -v /home/ubuntu/netrisk/database:/app/database \
+  public.ecr.aws/u2v8m6a3/netrisk:1.0
+```

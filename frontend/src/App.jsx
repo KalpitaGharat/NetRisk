@@ -9,6 +9,7 @@ import SdlcComparisonPage from './pages/SdlcComparisonPage';
 import DocumentationPage from './pages/DocumentationPage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
+import { NetRiskAPI } from './api';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -53,9 +54,11 @@ export default function App() {
   const handleLogout = () => {
     try {
       localStorage.removeItem('netrisk_user');
+      localStorage.removeItem('netrisk_token');
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+    NetRiskAPI.logout().catch(() => {});
     setCurrentUser(null);
     setCurrentTab('login');
     showToast('Session terminated. Please authenticate to continue.', 'info');

@@ -14,7 +14,7 @@ flowchart LR
     B --> C["3. Install Deps<br/>(requirements.txt)"]
     C --> D["4. Code Validation<br/>(compileall syntax)"]
     D --> E["5. Automated Tests<br/>(pytest + JUnit XML)"]
-    E --> F["6. Docker Build Validation<br/>(Image 'netrisk:1.0')"]
+    E --> F["6. Docker Build Validation<br/>(Image 'netrisk:2.0')"]
     F --> G["7. Post-Build Actions<br/>(JUnit Publishing & Cleanup)"]
 ```
 
@@ -26,8 +26,8 @@ flowchart LR
 | **2. Environment Setup** | Creates isolated runtime | `python3 -m venv` or `python -m venv` | Sets up clean virtual environment `.venv-ci` on agent. |
 | **3. Install Dependencies**| Installs project dependencies | `pip install -r requirements.txt` | Installs FastAPI, Uvicorn, SQLAlchemy, Streamlit, Pytest, and Pydantic. |
 | **4. Code Validation** | Syntax and bytecode check | `python -m compileall` | Validates syntax across `backend`, `tests`, `pages`, `services`, and `app.py`. |
-| **5. Automated Tests** | Executes full test suite | `pytest --junitxml=test-results.xml` | Runs all 54 unit and integration tests; records test metrics. |
-| **6. Docker Build Validation** | Verifies container build | `docker build -t netrisk:1.0 .` | Builds the 2-stage React + FastAPI container without starting services. |
+| **5. Automated Tests** | Executes full test suite | `pytest --junitxml=test-results.xml` | Runs all 60 unit and integration tests; records test metrics. |
+| **6. Docker Build Validation** | Verifies container build | `docker build -t netrisk:2.0 .` | Builds the single-stage React + FastAPI container without starting services. |
 | **7. Post-Build Summary** | Status reporting & cleanup | Jenkins JUnit plugin & post scripts | Publishes JUnit test dashboard and cleans up ephemeral `.venv-ci`. |
 
 ---
@@ -52,7 +52,7 @@ The pipeline is designed to execute safely on standard Jenkins agents without re
    - On Linux agents, the `jenkins` user must belong to the `docker` group (`sudo usermod -aG docker jenkins`).
    - If Docker is not available on the agent, the pipeline logs a notice and continues safely without failing.
 4. **Node.js:**
-   - **NOT required on host Jenkins agent.** The frontend compilation (React 18 + Vite) occurs inside Stage 1 (`node:20-alpine`) of the multi-stage Docker build.
+   - **NOT required on host Jenkins agent.** The frontend compilation (React 18 + Vite) occurs inside the single-stage Docker build via in-image Node.js and npm.
 
 ---
 
