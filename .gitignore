@@ -59,6 +59,9 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+test-results.xml
+*.xml
+.venv-ci/
 
 # Archives & Temporary
 _archived_web_frontend/

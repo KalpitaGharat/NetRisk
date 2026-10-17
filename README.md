@@ -280,3 +280,62 @@ All 54 test cases cover risk calculations, SDLC suitability formulas, recommenda
 NETRISK directly aligns with **UN SDG 9: Industry, Innovation, and Infrastructure**:
 - **Target 9.1 & 9.4**: Protects industrial and communication infrastructure by ensuring cybersecurity software for intrusion detection is built with a life-cycle methodology calibrated to risk severity.
 - **Traceable Decision Support**: Replaces subjective decisions with reproducible mathematical formulations and explainable evidence.
+
+---
+
+## 11. Docker Containerization & Deployment
+
+NETRISK includes a production-grade Docker containerization setup with automated SQLite persistence, non-root user execution, and native healthcheck probes.
+
+### Quick Start with Docker Compose (Recommended)
+```powershell
+# Build and launch container in background
+docker compose up -d --build
+
+# Verify container status and health
+docker compose ps
+
+# View live container logs
+docker compose logs -f
+```
+
+Open your browser at:
+- **Container Application URL:** **`http://localhost:8501`**
+
+### Building with Standard Docker CLI
+```powershell
+# Build image
+docker build -t netrisk:1.0 .
+
+# Run with persistent SQLite storage
+docker run -d `
+  --name netrisk-app `
+  --restart unless-stopped `
+  -p 8501:8501 `
+  -v ./database:/app/database `
+  netrisk:1.0
+```
+
+### Persistent Storage & Safety Rule
+- SQLite data is persisted to the Docker volume mounted at `/app/database`.
+- Containers can be stopped, removed, or recreated without losing assessment history.
+- **Safety Warning**: Run `docker compose down` to stop containers safely. Avoid `docker compose down -v` as the `-v` flag deletes persistent volumes.
+- For in-depth container architecture, security specifications, and CI/CD preparation, see [**`DOCKER.md`**](file:///c:/PROJECTS/NetRisk/DOCKER.md).
+
+---
+
+## 12. Jenkins CI/CD Pipeline
+
+NETRISK includes an enterprise-grade Declarative Jenkins pipeline ([`Jenkinsfile`](file:///c:/PROJECTS/NetRisk/Jenkinsfile)) designed for cross-platform execution on Linux and Windows CI agents.
+
+### Pipeline Stages
+1. **Checkout**: Clones repository from `https://github.com/KalpitaGharat/NetRisk.git` on branch `main`.
+2. **Environment Setup**: Provisions an isolated Python virtual environment (`.venv-ci`).
+3. **Install Dependencies**: Installs project packages from `requirements.txt`.
+4. **Code Validation**: Executes syntax and bytecode validation via `python -m compileall`.
+5. **Automated Tests**: Runs the complete 54-test suite via `pytest` and publishes interactive JUnit XML reports (`test-results.xml`).
+6. **Docker Build Validation**: Safely builds container image `netrisk:1.0` to validate buildability without launching runtime containers.
+7. **Post-Build Summary**: Generates build status summaries and cleans up ephemeral CI environments.
+
+For setup instructions, agent prerequisites, plugin requirements, and troubleshooting, see the [**`JENKINS.md`**](file:///c:/PROJECTS/NetRisk/JENKINS.md) operations guide.
+
