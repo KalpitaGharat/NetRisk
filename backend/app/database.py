@@ -5,10 +5,18 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from .config import settings
 
 # Ensure database directory exists if sqlite
-if settings.DATABASE_URL.startswith("sqlite:///"):
-    db_file_path = settings.DATABASE_URL.replace("sqlite:///", "")
+if settings.DATABASE_URL.startswith("sqlite://"):
+    if settings.DATABASE_URL.startswith("sqlite:////"):
+        db_file_path = "/" + settings.DATABASE_URL[11:]
+    elif settings.DATABASE_URL.startswith("sqlite:///"):
+        db_file_path = settings.DATABASE_URL[10:]
+    else:
+        db_file_path = settings.DATABASE_URL[9:]
     db_dir = Path(db_file_path).parent
-    db_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        db_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        print(f"[WARN] Could not pre-create database directory {db_dir}: {e}")
 
 connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
 

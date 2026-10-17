@@ -1,0 +1,9 @@
+services:
+  netrisk:
+    build: .
+    image: netrisk:1.0
+    container_name: netrisk-app
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./database:/app/database

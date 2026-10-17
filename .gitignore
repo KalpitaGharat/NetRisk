@@ -63,5 +63,12 @@ test-results.xml
 *.xml
 .venv-ci/
 
-# Archives & Temporary
+# Archives, Scans & Temporary
 _archived_web_frontend/
+.scannerwork/
+*.html
+!frontend/index.html
+!frontend_static/**
+!backend/app/templates/**
+html.tpl
+

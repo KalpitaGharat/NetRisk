@@ -13,20 +13,42 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     APP_ENV: str = "development"
     DEBUG: bool = True
-    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH.as_posix()}")
+    DATABASE_URL: str = (
+        os.getenv("NETRISK_DATABASE_URL") 
+        or os.getenv("DATABASE_URL") 
+        or f"sqlite:///{DEFAULT_DB_PATH.as_posix()}"
+    )
 
     @field_validator("DATABASE_URL", mode="after")
     @classmethod
     def resolve_sqlite_url(cls, v: str) -> str:
-        if v.startswith("sqlite:///"):
-            raw_path = v.replace("sqlite:///", "")
+        if v.startswith("sqlite://"):
+            # Normalize /app/data container paths
+            if "/app/data" in v or "app/data" in v:
+                return "sqlite:////app/data/netrisk.db"
+            
+            if v.startswith("sqlite:////"):
+                raw_path = "/" + v[11:]
+            elif v.startswith("sqlite:///"):
+                raw_path = v[10:]
+            else:
+                raw_path = v[9:]
+
+            # Absolute Unix path (/...) or Windows drive path (C:/...)
+            if raw_path.startswith("/") or (len(raw_path) > 1 and raw_path[1] == ":"):
+                if raw_path.startswith("/"):
+                    return f"sqlite:////{raw_path.lstrip('/')}"
+                return f"sqlite:///{raw_path}"
+
             path_obj = Path(raw_path)
-            if not path_obj.is_absolute():
-                if "netrisk" in raw_path.lower():
-                    resolved = (PROJECT_ROOT / "database" / "netrisk.db").resolve()
-                else:
-                    resolved = (PROJECT_ROOT / path_obj).resolve()
-                return f"sqlite:///{resolved.as_posix()}"
+            if path_obj.is_absolute():
+                return f"sqlite:///{path_obj.as_posix()}"
+
+            if "netrisk.db" in raw_path.lower() and not raw_path.startswith("data"):
+                resolved = (PROJECT_ROOT / "database" / "netrisk.db").resolve()
+            else:
+                resolved = (PROJECT_ROOT / path_obj).resolve()
+            return f"sqlite:///{resolved.as_posix()}"
         return v
     CORS_ORIGINS: List[str] = [
         "http://127.0.0.1:5500",
