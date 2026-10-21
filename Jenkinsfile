@@ -16,11 +16,12 @@ pipeline {
     }
 
     environment {
-        REPO_URL       = 'https://github.com/KalpitaGharat/NetRisk.git'
-        DEFAULT_BRANCH = 'main'
-        IMAGE_NAME     = 'netrisk'
-        IMAGE_TAG      = '2.0'
-        VENV_DIR       = '.venv-ci'
+        REPO_URL          = 'https://github.com/KalpitaGharat/NetRisk.git'
+        DEFAULT_BRANCH    = 'main'
+        IMAGE_NAME        = 'netrisk'
+        IMAGE_TAG         = '2.0'
+        VENV_DIR          = '.venv-ci'
+        SONAR_PROJECT_KEY = 'netrisk'
     }
 
     stages {
@@ -129,6 +130,57 @@ pipeline {
             }
         }
 
+        stage('SonarQube Code Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner'
+
+                    withSonarQubeEnv('SonarQube') {
+                        if (isUnix()) {
+                            sh """
+                                "${scannerHome}/bin/sonar-scanner" \
+                                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                  -Dsonar.projectName=NETRISK \
+                                  -Dsonar.sources=backend,frontend \
+                                  -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/.venv/**,**/__pycache__/** \
+                                  -Dsonar.python.version=3.11
+                            """
+                        } else {
+                            bat """
+                                "${scannerHome}\\bin\\sonar-scanner.bat" ^
+                                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} ^
+                                  -Dsonar.projectName=NETRISK ^
+                                  -Dsonar.sources=backend,frontend ^
+                                  -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/.venv/**,**/__pycache__/** ^
+                                  -Dsonar.python.version=3.11
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Trivy Filesystem Scan') {
+            steps {
+                sh '''
+                    trivy fs \
+                      --scanners vuln,secret \
+                      --severity HIGH,CRITICAL \
+                      --exit-code 0 \
+                      --format table \
+                      --output trivy-fs-report.txt \
+                      .
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'trivy-fs-report.txt',
+                                     allowEmptyArchive: true
+                }
+            }
+        }
+
+
         stage('Docker Build Validation') {
             steps {
                 script {
@@ -154,6 +206,26 @@ pipeline {
                     } else {
                         echo "NOTICE: Docker CLI or Docker daemon not available on this agent. Skipping container image build stage."
                     }
+                }
+            }
+        }
+
+        stage('Trivy Docker Image Scan') {
+            steps {
+                sh '''
+                    trivy image \
+                      --scanners vuln \
+                      --severity HIGH,CRITICAL \
+                      --exit-code 0 \
+                      --format table \
+                      --output trivy-image-report.txt \
+                      netrisk:2.0
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'trivy-image-report.txt',
+                                     allowEmptyArchive: true
                 }
             }
         }
